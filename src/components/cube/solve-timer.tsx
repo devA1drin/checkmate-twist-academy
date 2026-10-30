@@ -8,31 +8,33 @@ const HOLD_MS = 300;
 
 /**
   Hold-to-start solve timer: hold space (or press and hold the pad) until it turns green, release to start,
-  press again to stop. Optional 15 s WCA inspection (+2 after 15 s, DNF after 17 s).
+  press again to stop. Optional inspection (WCA: +2 when it runs over, DNF after 2 s more).
 */
 export function SolveTimer({ inspection = true, disabled = false, onDone, resetKey }: {
-  inspection?: boolean; disabled?: boolean; resetKey?: string | number;
+  /** true = 15 s, a number = that many seconds, false/0 = none. */
+  inspection?: boolean | number; disabled?: boolean; resetKey?: string | number;
   onDone: (ms: number, penalty: Penalty) => void;
 }) {
+  const S = inspection === true ? 15 : inspection || 0;
   const [phase, setPhase] = useState<Phase>("idle");
   const [display, setDisplay] = useState(0);
-  const [left, setLeft] = useState(15);
+  const [left, setLeft] = useState(S);
   const [ready, setReady] = useState(false);
   const start = useRef(0), inspectAt = useRef(0), hold = useRef<ReturnType<typeof setTimeout> | null>(null), raf = useRef(0), pen = useRef<Penalty>(null);
   const phaseRef = useRef(phase); phaseRef.current = phase;
   const readyRef = useRef(ready); readyRef.current = ready;
   const doneRef = useRef(onDone); doneRef.current = onDone;
 
-  useEffect(() => { setPhase("idle"); setDisplay(0); setLeft(15); }, [resetKey]);
+  useEffect(() => { setPhase("idle"); setDisplay(0); setLeft(S); }, [resetKey, S]);
   useEffect(() => {
     if (phase === "running") {
       const tick = () => { setDisplay(performance.now() - start.current); raf.current = requestAnimationFrame(tick); };
       raf.current = requestAnimationFrame(tick); return () => cancelAnimationFrame(raf.current);
     }
     if (phase === "inspecting" || (phase === "armed" && inspectAt.current)) {
-      const t = setInterval(() => setLeft(15 - (performance.now() - inspectAt.current) / 1000), 100); return () => clearInterval(t);
+      const t = setInterval(() => setLeft(S - (performance.now() - inspectAt.current) / 1000), 100); return () => clearInterval(t);
     }
-  }, [phase]);
+  }, [phase, S]);
 
   const press = useCallback(() => {
     const p = phaseRef.current;
@@ -41,20 +43,20 @@ export function SolveTimer({ inspection = true, disabled = false, onDone, resetK
       const t = Math.round(performance.now() - start.current);
       setDisplay(t); setPhase("done"); doneRef.current(t, pen.current); return;
     }
-    if (p === "idle" && inspection) { inspectAt.current = performance.now(); setLeft(15); setPhase("inspecting"); return; }
+    if (p === "idle" && S > 0) { inspectAt.current = performance.now(); setLeft(S); setPhase("inspecting"); return; }
     if (p === "idle" || p === "inspecting") {
       if (p === "idle") inspectAt.current = 0;
       setPhase("armed"); setReady(false); hold.current = setTimeout(() => setReady(true), HOLD_MS);
     }
-  }, [disabled, inspection]);
+  }, [disabled, S]);
   const release = useCallback(() => {
     if (phaseRef.current !== "armed") return;
     if (hold.current) clearTimeout(hold.current);
     if (!readyRef.current) { setPhase(inspectAt.current ? "inspecting" : "idle"); return; }
     pen.current = null;
-    if (inspectAt.current) { const used = (performance.now() - inspectAt.current) / 1000; pen.current = used > 17 ? "DNF" : used > 15 ? "+2" : null; }
+    if (inspectAt.current) { const used = (performance.now() - inspectAt.current) / 1000; pen.current = used > S + 2 ? "DNF" : used > S ? "+2" : null; }
     start.current = performance.now(); setDisplay(0); setReady(false); setPhase("running");
-  }, []);
+  }, [S]);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => { if (e.code !== "Space" || e.repeat) return; const el = e.target as HTMLElement; if (el.closest("input, textarea, select, button, a")) return; e.preventDefault(); press(); };
@@ -65,7 +67,7 @@ export function SolveTimer({ inspection = true, disabled = false, onDone, resetK
 
   const big = phase === "inspecting" || (phase === "armed" && inspectAt.current) ? (left > 0 ? Math.ceil(left).toString() : left > -2 ? "+2" : "DNF") : formatTime(display);
   const color = phase === "armed" ? (ready ? "text-ok" : "text-bad") : phase === "inspecting" ? "text-warn" : "";
-  const hint = phase === "done" ? "Done" : disabled ? "Waiting…" : phase === "idle" ? (inspection ? "Press space or tap to start inspection" : "Hold space or press and hold, release to start")
+  const hint = phase === "done" ? "Done" : disabled ? "Waiting…" : phase === "idle" ? (S > 0 ? `Press space or tap to start ${S} s inspection` : "Hold space or press and hold, release to start")
     : phase === "inspecting" ? "Hold, then release to start the solve" : phase === "armed" ? (ready ? "Release to start" : "Keep holding…") : phase === "running" ? "Press space or tap to stop" : "Done";
 
   return (
