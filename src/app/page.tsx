@@ -22,6 +22,13 @@ const TOOLS: [string, string, string][] = [
   ["/videos", "Videos", `${videos.length} tutorials we found useful, from J Perm, GothamChess, Daniel Naroditsky and others.`],
 ];
 
+const SECTIONS: [string, string, string, [string, string][]][] = [
+  ["/learn", "Learn", "Courses in order, opening kits, videos.", [["/chess", "Chess lessons"], ["/openings", "Opening kits"], ["/cube", "Cube lessons"], ["/videos", "Videos"]]],
+  ["/play", "Play", "Live games, the computer, cube races.", [["/play/online", "Play online"], ["/chess/play", "Play the computer"], ["/battle", "Cube battle"]]],
+  ["/practice", "Practice", "Short daily training that earns XP.", [["/daily", "Daily puzzle & scramble"], ["/chess/puzzles", "Puzzles"], ["/cube/timer", "Timer"], ["/challenges", "Challenges"]]],
+  ["/community", "Community", "Ask, share, add friends.", [["/forum", "Forum"], ["/friends", "Friends"], ["/league", "Weekly league"]]],
+];
+
 export default function Home() {
   const excerpt = EXCERPT.map((id) => PLL.find((a) => a.id === id)!).filter(Boolean);
   return (
@@ -30,16 +37,16 @@ export default function Home() {
       <section className="mx-auto max-w-7xl px-4 sm:px-6 pt-12 sm:pt-16 pb-16 grid lg:grid-cols-[1.15fr_1fr] gap-x-16 gap-y-12 items-start">
         <div>
           <p className="eyebrow">Chess &middot; Rubik&apos;s Cube &middot; free to use</p>
-          <h1 className="font-display mt-5 text-[2.6rem] sm:text-6xl leading-[1.02] font-semibold">
-            A study room for chess players and cubers.
+          <h1 className="font-display mt-4 text-[2.25rem] sm:text-5xl leading-[1.05] font-semibold max-w-2xl">
+            Learn chess and the Rubik&apos;s Cube, then play people.
           </h1>
           <p className="mt-6 text-lg leading-relaxed max-w-xl">
             {CHESS_LESSONS.length} chess lessons that run from the rules to rook endgames, and {CUBE_LESSONS.length} cube lessons that run from your first solve to full CFOP.
             Stockfish and a two-phase cube solver run in your browser, so you can check any idea as you read.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/chess" className="btn btn-primary !px-4 !py-2.5">Start the chess course <ArrowRight size={16} aria-hidden /></Link>
-            <Link href="/cube" className="btn btn-ghost !px-4 !py-2.5">Start the cube course</Link>
+            <Link href="/welcome" className="btn btn-primary">Get started <ArrowRight size={16} aria-hidden /></Link>
+            <Link href="/play/online" className="btn btn-ghost">Play chess online</Link>
           </div>
           <dl className="mt-12 grid grid-cols-2 sm:grid-cols-4 border-t border-ink">
             {[[String(puzzles.length), "Lichess puzzles"], [String(OLL.length), "OLL cases"], [String(PLL.length), "PLL cases"], [String(videos.length), "video lessons"]].map(([n, l]) => (
@@ -53,6 +60,20 @@ export default function Home() {
         </div>
         <div className="lg:pt-2 max-w-[440px] w-full lg:justify-self-end">
           <MateBoard />
+        </div>
+      </section>
+
+
+      {/* The four sections, in plain words */}
+      <section className="border-t border-line">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-8">
+          {SECTIONS.map(([href, name, desc, links]) => (
+            <div key={href}>
+              <Link href={href} className="text-xl font-semibold hover:underline underline-offset-4">{name}</Link>
+              <p className="text-sm text-muted mt-1.5 mb-3">{desc}</p>
+              <ul className="space-y-1.5 text-sm">{links.map(([h, l]) => <li key={h}><Link href={h} className="link">{l}</Link></li>)}</ul>
+            </div>
+          ))}
         </div>
       </section>
 

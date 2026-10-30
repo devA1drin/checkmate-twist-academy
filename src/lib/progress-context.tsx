@@ -7,6 +7,8 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import { EMPTY_PROGRESS, ProgressData, Solve, QuizResult, PuzzleAttempt, EngineGame } from "./progress-types";
 import { useAuth } from "./auth-context";
 import { getSupabase } from "./supabase/client";
+import { submit, flush, type Op } from "./sync-queue";
+import { notifyActivity } from "./stats-context";
 
 const KEY = "cta-progress-v1";
 
@@ -94,50 +96,60 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
 
   // Achievements for signed-in users are awarded by the database (see migration 0003), never by the client.
 
-  const remote = useCallback(async (fn: (sb: NonNullable<ReturnType<typeof getSupabase>>, uid: string) => PromiseLike<{ error: { message: string } | null }>) => {
-    const sb = getSupabase();
-    if (!sb || !uid) return;
-    const { error } = await fn(sb, uid);
-    setSyncError(error ? `Sync failed: ${error.message}` : null);
+  // Writes go through the offline queue: they are sent now, or replayed when the device reconnects.
+  const remote = useCallback(async (op: Omit<Op, "uid">) => {
+    if (!uid) return;
+    const r = await submit({ ...op, uid });
+    setSyncError(r.error ? r.error : null);
+    if (!r.queued && !r.error) notifyActivity();
+  }, [uid]);
+
+  useEffect(() => {
+    if (!uid) return;
+    const go = () => { flush(uid).then((r) => { if (r.sent) notifyActivity(); }); };
+    go();
+    window.addEventListener("online", go);
+    return () => window.removeEventListener("online", go);
   }, [uid]);
 
   const value: ProgressCtx = {
     data, ready, mode, syncError, guestHasData,
     completeLesson: (id) => {
       setData((d) => (d.completedLessons.includes(id) ? d : { ...d, completedLessons: [...d.completedLessons, id] }));
-      remote((sb, u) => sb.from("lesson_progress").upsert({ user_id: u, lesson_id: id }, { onConflict: "user_id,lesson_id" }));
+      remote({ kind: "upsert", table: "lesson_progress", values: { user_id: uid, lesson_id: id }, onConflict: "user_id,lesson_id" });
     },
     uncompleteLesson: (id) => {
       setData((d) => ({ ...d, completedLessons: d.completedLessons.filter((x) => x !== id) }));
-      remote((sb, u) => sb.from("lesson_progress").delete().eq("user_id", u).eq("lesson_id", id));
+      remote({ kind: "delete", table: "lesson_progress", match: { user_id: uid!, lesson_id: id } });
     },
     addSolve: (s) => {
       setData((d) => ({ ...d, solves: [...d.solves, s] }));
-      remote((sb, u) => sb.from("solves").insert({ id: s.id, user_id: u, time_ms: s.timeMs, penalty: s.penalty, scramble: s.scramble }));
+      remote({ kind: "insert", table: "solves", values: { id: s.id, user_id: uid, time_ms: s.timeMs, penalty: s.penalty, scramble: s.scramble } });
     },
     updateSolve: (id, patch) => {
       setData((d) => ({ ...d, solves: d.solves.map((s) => (s.id === id ? { ...s, ...patch } : s)) }));
-      if ("penalty" in patch) remote((sb, u) => sb.from("solves").update({ penalty: patch.penalty }).eq("id", id).eq("user_id", u));
+      if ("penalty" in patch) remote({ kind: "update", table: "solves", values: { penalty: patch.penalty }, match: { id, user_id: uid! } });
     },
     deleteSolve: (id) => {
       setData((d) => ({ ...d, solves: d.solves.filter((s) => s.id !== id) }));
-      remote((sb, u) => sb.from("solves").delete().eq("id", id).eq("user_id", u));
+      remote({ kind: "delete", table: "solves", match: { id, user_id: uid! } });
     },
     addQuizResult: (r) => {
       setData((d) => ({ ...d, quizResults: [...d.quizResults, r] }));
-      remote((sb, u) => sb.from("quiz_results").insert({ user_id: u, quiz_id: r.quizId, score: r.score, total: r.total }));
+      remote({ kind: "insert", table: "quiz_results", values: { user_id: uid, quiz_id: r.quizId, score: r.score, total: r.total } });
     },
     addPuzzleAttempt: (a) => {
       setData((d) => ({ ...d, puzzles: [...d.puzzles, a] }));
-      remote((sb, u) => sb.from("puzzle_attempts").insert({ user_id: u, puzzle_id: a.puzzleId, solved: a.solved, rating: a.rating }));
+      remote({ kind: "insert", table: "puzzle_attempts", values: { user_id: uid, puzzle_id: a.puzzleId, solved: a.solved, rating: a.rating } });
     },
     addGame: (g) => {
       setData((d) => ({ ...d, games: [...d.games, g] }));
-      remote((sb, u) => sb.from("engine_games").insert({ user_id: u, result: g.result, level: g.level }));
+      remote({ kind: "insert", table: "engine_games", values: { user_id: uid, result: g.result, level: g.level } });
     },
     addScan: () => {
       setData((d) => ({ ...d, scans: d.scans + 1 }));
-      remote((sb, u) => sb.from("profiles").update({ scans: scansRef.current + 1 }).eq("id", u).then((r) => { scansRef.current += 1; return r; }));
+      scansRef.current += 1;
+      remote({ kind: "update", table: "profiles", values: { scans: scansRef.current }, match: { id: uid! } });
     },
     resetLocal: () => { localStorage.removeItem(KEY); if (mode === "guest") setData(EMPTY_PROGRESS); setGuestHasData(false); },
     importGuestToAccount: async () => {

@@ -1,11 +1,5 @@
-import { PageHeader } from "@/components/ui/page-header";
 import { Dashboard } from "./dashboard";
-export const metadata = { title: "Dashboard" };
+export const metadata = { title: "My page" };
 export default function Page() {
-  return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
-      <PageHeader eyebrow="Your progress" title="Dashboard" />
-      <Dashboard />
-    </div>
-  );
+  return <div className="mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-12"><Dashboard /></div>;
 }

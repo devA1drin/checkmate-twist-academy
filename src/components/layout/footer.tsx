@@ -7,13 +7,13 @@ export function Footer() {
     <footer className="border-t border-line mt-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12 grid gap-10 md:grid-cols-[1.4fr_repeat(4,1fr)]">
         <div>
-          <div className="flex items-center gap-2.5 font-display text-lg font-semibold"><Logo /><span>Checkmate <em className="font-normal">&amp;</em> Twist Academy</span></div>
+          <div className="flex items-center gap-2.5 text-lg font-semibold"><Logo /><span>Checkmate &amp; Twist Academy</span></div>
           <p className="text-sm text-muted mt-3 max-w-xs leading-relaxed">Free lessons and practice tools for chess and the Rubik&apos;s Cube. The engine, the solver and the camera tools all run on your device.</p>
         </div>
         {NAV.map((g) => (
           <div key={g.label}>
             <div className="eyebrow mb-2">{g.label}</div>
-            {g.items.map((i) => <Link key={i.href} href={i.href} className="block text-sm py-1 hover:underline underline-offset-4">{i.label}</Link>)}
+            {g.items.map((i) => <Link key={i.href} href={i.href} className="block text-sm py-1.5 hover:underline underline-offset-4">{i.label}</Link>)}
           </div>
         ))}
       </div>
