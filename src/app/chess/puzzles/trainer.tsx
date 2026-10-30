@@ -3,6 +3,7 @@ import { Chess } from "chess.js";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle2, XCircle, Lightbulb, Eye, SkipForward, ExternalLink, Cpu } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Board, tryMove } from "@/components/chess/board";
 import puzzlesData from "@/data/puzzles.json";
 import { useProgress } from "@/lib/progress-context";
@@ -16,6 +17,7 @@ const pretty = (t: string) => t.replace(/([A-Z])/g, " $1").replace(/^./, (c) => 
 type State = "playing" | "solved" | "failed";
 
 export function PuzzleTrainer() {
+  const wantId = useSearchParams().get("id");
   const { data, addPuzzleAttempt } = useProgress();
   const [theme, setTheme] = useState("all");
   const [band, setBand] = useState(0);
@@ -55,8 +57,11 @@ export function PuzzleTrainer() {
   }, [pool, solvedIds, puzzle?.id, start]);
 
   // pick a puzzle when filters change
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { pick(); return clearTimers; }, [theme, band]);
+  useEffect(() => {
+    const want = wantId ? PUZZLES.find((p) => p.id === wantId) : null;
+    if (want && !puzzle) start(want); else pick();
+    return clearTimers;
+  }, [theme, band]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const record = (solved: boolean) => {
     if (!puzzle || recorded.current === puzzle.id) return;
