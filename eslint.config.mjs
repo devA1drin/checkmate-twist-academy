@@ -19,6 +19,9 @@ const eslintConfig = [
       "build/**",
       "next-env.d.ts",
       "supabase/functions/**",
+      "public/stockfish/**",
+      "public/vendor/**",
+      "scripts/**/*.cjs",
     ],
   },
 ];
