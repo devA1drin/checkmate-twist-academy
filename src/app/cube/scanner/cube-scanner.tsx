@@ -1,211 +1,441 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Camera, CheckCircle2, RotateCcw, Loader2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Camera, CameraOff, Check, ChevronLeft, ChevronRight, Download, FlipHorizontal, ImageUp, Loader2, Pause, Play, Printer, RotateCcw, SwitchCamera, Flashlight, Keyboard } from "lucide-react";
 import { useCamera, cameraUnavailableReason } from "@/lib/camera/use-camera";
 import { PrivacyNote } from "@/components/privacy-note";
 import { CubeNet } from "@/components/cube/cube-net";
-import { CubeSimulator } from "@/components/cube/cube-simulator";
-import { STICKER_COLORS_2D, COLOR_NAMES } from "@/components/cube/colors";
-import { classifyStickers, nearestReference, type RGB } from "@/lib/cube/color-classify";
-import { validateColors } from "@/lib/cube/validate";
+import { Cube3D, type CubeHandle } from "@/components/cube/cube3d";
+import { shortSolve3 } from "@/components/cube/cube-simulator";
+import { STICKER_COLORS_2D } from "@/components/cube/colors";
+import type { RGB } from "@/lib/cube/color-classify";
+import { classifyScan, COLOR_WORD, describeMove, diagnose, FACE_ORDER, gridRegion, motion, nearest, palette, sampleGrid, SCAN_STEPS, type Problem } from "@/lib/cube/scan";
+import { beginnerGuide, type Stage } from "@/lib/cube/beginner";
 import { solveFacelets } from "@/lib/cube/solver-client";
-import { applyAlg, isSolved, parseAlg } from "@/lib/cube/model";
+import { applyAlg, isSolved, SOLVED } from "@/lib/cube/model";
 import { useProgress } from "@/lib/progress-context";
 
-const FACES = "URFDLB";
-const GUIDE: Record<string, string> = {
-  U: "White center facing the camera, green side at the BOTTOM edge of the picture.",
-  R: "Red center facing the camera, white side on TOP.",
-  F: "Green center facing the camera, white side on TOP.",
-  D: "Yellow center facing the camera, green side at the TOP edge of the picture.",
-  L: "Orange center facing the camera, white side on TOP.",
-  B: "Blue center facing the camera, white side on TOP.",
-};
+type Phase = "scan" | "review" | "guide";
+type Faces = Partial<Record<string, RGB[]>>;
+interface Track { name: string; moves: string[]; stageOf: number[]; stages: Stage[] }
+const HOLD_MS = 1000;
+const STILL = 9; // max ΔE between frames to count as holding still
+const WORK = 360; // width of the downscaled frame used for sampling
 
-/** Average color of the central part of each of the 9 grid cells. */
-function sampleFace(canvas: HTMLCanvasElement): RGB[] {
-  const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
-  const { width: w, height: h } = canvas;
-  const side = Math.min(w, h) * 0.6, x0 = (w - side) / 2, y0 = (h - side) / 2, cell = side / 3, patch = cell * 0.36;
-  const out: RGB[] = [];
-  for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) {
-    const px = Math.round(x0 + c * cell + (cell - patch) / 2), py = Math.round(y0 + r * cell + (cell - patch) / 2), ps = Math.max(1, Math.round(patch));
-    const d = ctx.getImageData(px, py, ps, ps).data;
-    // trimmed mean: ignore the darkest/brightest 15% (glare, sticker edges)
-    const px3: RGB[] = [];
-    for (let i = 0; i < d.length; i += 4) px3.push([d[i], d[i + 1], d[i + 2]]);
-    px3.sort((a, b) => a[0] + a[1] + a[2] - (b[0] + b[1] + b[2]));
-    const lo = Math.floor(px3.length * 0.15), hi = Math.ceil(px3.length * 0.85);
-    const sel = px3.slice(lo, Math.max(lo + 1, hi));
-    out.push([0, 1, 2].map((k) => sel.reduce((s, p) => s + p[k], 0) / sel.length) as RGB);
-  }
-  return out;
+const swatch = (f: string) => <span aria-hidden className="inline-block h-3.5 w-3.5 rounded-[3px] border border-line align-[-2px]" style={{ background: STICKER_COLORS_2D[f] }} />;
+
+/** Small looping 3D hint showing how to turn the whole cube to reach the next face. */
+function RotationHint({ step }: { step: number }) {
+  const ref = useRef<CubeHandle>(null);
+  const s = SCAN_STEPS[step];
+  const prevRot = step > 0 ? SCAN_STEPS[step - 1].rot : "";
+  useEffect(() => {
+    const from = prevRot ? applyAlg(SOLVED, prevRot) : SOLVED;
+    const run = () => { ref.current?.reset(from); if (s.step) setTimeout(() => ref.current?.enqueue(s.step.split(" ").map((text) => ({ text }))), 500); };
+    run();
+    if (!s.step) return;
+    const id = setInterval(run, 3200);
+    return () => clearInterval(id);
+  }, [step, prevRot, s.step]);
+  return <Cube3D ref={ref} size={3} speed={1.4} turnable={false} className="h-36 w-36 shrink-0" label={`Animation: how to hold the cube for the ${COLOR_WORD[s.face]} face`} />;
 }
 
 export function CubeScanner() {
-  const cam = useCamera();
+  const cam = useCamera("environment");
   const { addScan } = useProgress();
   const [reason, setReason] = useState<string | null>(null);
-  const [step, setStep] = useState(0); // face index being scanned; 6 = review
-  const [samples, setSamples] = useState<(RGB[] | null)[]>(Array(6).fill(null));
-  const [live, setLive] = useState<string[]>([]);
+  const [phase, setPhase] = useState<Phase>("scan");
+  const [step, setStep] = useState(0);
+  const [faces, setFaces] = useState<Faces>({});
+  const [live, setLive] = useState<{ tokens: string[]; still: boolean; centreOk: boolean } | null>(null);
+  const [hold, setHold] = useState(0);
+  const [auto, setAuto] = useState(true);
+  const [mirror, setMirror] = useState(false);
+  const [dims, setDims] = useState({ w: 16, h: 9 });
+  const [photo, setPhoto] = useState<{ img: HTMLImageElement; url: string } | null>(null);
+  const [zoom, setZoom] = useState(0.62);
   const [tokens, setTokens] = useState<string[] | null>(null);
-  const [lowConf, setLowConf] = useState<number[]>([]);
+  const [confidence, setConfidence] = useState<number[]>([]);
   const [brush, setBrush] = useState("U");
-  const [errors, setErrors] = useState<string[]>([]);
+  const [focus, setFocus] = useState<number[]>([]);
   const [solving, setSolving] = useState(false);
-  const [result, setResult] = useState<{ facelets: string; solution: string } | null>(null);
-  const [mode, setMode] = useState<"camera" | "manual">("camera");
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [dims, setDims] = useState({ w: 1280, h: 720 });
+  const [solveErr, setSolveErr] = useState<string | null>(null);
+  const [result, setResult] = useState<{ facelets: string; fast: Track; beginner: Track | null } | null>(null);
+  const work = useRef<HTMLCanvasElement | null>(null);
+  const prevSample = useRef<RGB[] | null>(null);
+  const holdStart = useRef<number | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const announce = useRef<HTMLParagraphElement>(null);
   useEffect(() => setReason(cameraUnavailableReason()), []);
 
-  const grab = useCallback((): HTMLCanvasElement | null => {
-    const v = cam.videoRef.current;
-    if (!v || !v.videoWidth) return null;
-    const c = canvasRef.current ?? (canvasRef.current = document.createElement("canvas"));
-    if (c.width !== v.videoWidth) { c.width = v.videoWidth; c.height = v.videoHeight; setDims({ w: v.videoWidth, h: v.videoHeight }); }
-    c.getContext("2d", { willReadFrequently: true })!.drawImage(v, 0, 0);
-    return c;
-  }, [cam.videoRef]);
+  const cur = SCAN_STEPS[step];
+  const centres = useMemo(() => Object.fromEntries(Object.entries(faces).map(([f, s]) => [f, s![4]])), [faces]);
+  const pal = useMemo(() => palette(centres), [centres]);
 
-  // live preview of detected colors (reference palette) while the camera runs
+  /** Draw the source (camera or photo) downscaled and sample the 3x3 grid. */
+  const sample = useCallback((): RGB[] | null => {
+    const src: CanvasImageSource | null = photo ? photo.img : cam.videoRef.current;
+    const sw = photo ? photo.img.naturalWidth : cam.videoRef.current?.videoWidth ?? 0;
+    const sh = photo ? photo.img.naturalHeight : cam.videoRef.current?.videoHeight ?? 0;
+    if (!src || !sw || !sh) return null;
+    const w = WORK, h = Math.round((WORK * sh) / sw);
+    const c = work.current ?? (work.current = document.createElement("canvas"));
+    if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+    if (dims.w !== sw || dims.h !== sh) setDims({ w: sw, h: sh });
+    const ctx = c.getContext("2d", { willReadFrequently: true })!;
+    ctx.drawImage(src, 0, 0, w, h);
+    return sampleGrid(ctx.getImageData(0, 0, w, h).data, w, h, gridRegion(w, h, photo ? zoom : 0.62)).rgb;
+  }, [photo, zoom, cam.videoRef, dims.w, dims.h]);
+
+  const say = (t: string) => { if (announce.current) announce.current.textContent = t; };
+
+  const finishFaces = useCallback((next: Faces) => {
+    if (!FACE_ORDER.split("").every((f) => next[f])) return false;
+    const all = FACE_ORDER.split("").flatMap((f) => next[f]!);
+    const r = classifyScan(all);
+    setTokens(r.tokens); setConfidence(r.confidence); setFocus([]); setResult(null); setSolveErr(null);
+    setPhase("review"); cam.stop(); setPhoto(null);
+    say("All six faces captured. Check the colours below.");
+    return true;
+  }, [cam]);
+
+  const capture = useCallback((rgb?: RGB[] | null) => {
+    const s = rgb ?? sample();
+    if (!s) return;
+    const next = { ...faces, [cur.face]: s };
+    setFaces(next); setHold(0); holdStart.current = null; prevSample.current = null;
+    say(`${COLOR_WORD[cur.face]} face captured.`);
+    if (finishFaces(next)) return;
+    // next face not yet captured, in scan order
+    const order = SCAN_STEPS.map((x, i) => ({ x, i }));
+    const nxt = order.find(({ x, i }) => i > step && !next[x.face]) ?? order.find(({ x }) => !next[x.face]);
+    if (nxt) setStep(nxt.i);
+  }, [sample, faces, cur.face, step, finishFaces]);
+
+  // live readout + auto capture
   useEffect(() => {
-    if (cam.state !== "live" || step > 5) return;
-    const id = setInterval(() => { const c = grab(); if (c) setLive(sampleFace(c).map(nearestReference)); }, 250);
+    if (phase !== "scan" || cam.state !== "live" || photo) { setLive(null); return; }
+    const id = setInterval(() => {
+      const s = sample();
+      if (!s) return;
+      const toks = s.map((c) => nearest(c, pal).face);
+      const still = prevSample.current ? motion(prevSample.current, s) < STILL : false;
+      prevSample.current = s;
+      const centreOk = toks[4] === cur.face && !Object.entries(faces).some(([f, v]) => f !== cur.face && v && motion([v[4]], [s[4]]) < 6);
+      setLive({ tokens: toks, still, centreOk });
+      if (auto && still && centreOk) {
+        holdStart.current ??= performance.now();
+        const p = (performance.now() - holdStart.current) / HOLD_MS;
+        setHold(Math.min(1, p));
+        if (p >= 1) capture(s);
+      } else { holdStart.current = null; setHold(0); }
+    }, 120);
     return () => clearInterval(id);
-  }, [cam.state, step, grab]);
+  }, [phase, cam.state, photo, sample, pal, cur.face, faces, auto, capture]);
 
-  const capture = () => {
-    const c = grab();
-    if (!c) return;
-    const s = sampleFace(c);
-    const next = samples.slice(); next[step] = s; setSamples(next);
-    if (step < 5) { setStep(step + 1); return; }
-    // all six faces captured → classify with the cube's own centers
-    const all = next.flat() as RGB[];
-    const r = classifyStickers(all);
-    setTokens(r.tokens);
-    setLowConf(r.confidence.map((v, i) => (v < 0.25 && i % 9 !== 4 ? i : -1)).filter((i) => i >= 0));
-    setStep(6); cam.stop();
+  // photo sampling (static, refresh on zoom)
+  const photoTokens = useMemo(() => {
+    if (!photo) return null;
+    const s = sample();
+    return s ? s.map((c) => nearest(c, pal).face) : null;
+  }, [photo, sample, pal]);
+
+  const onFile = (file?: File) => {
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => { cam.stop(); setDims({ w: img.naturalWidth, h: img.naturalHeight }); setPhoto({ img, url }); setZoom(0.62); };
+    img.onerror = () => cam.setError("That file could not be read as an image.");
+    img.src = url;
   };
+  useEffect(() => () => { if (photo) URL.revokeObjectURL(photo.url); }, [photo]);
 
   const startManual = () => {
-    cam.stop(); setMode("manual");
-    setTokens(FACES.split("").flatMap((f) => Array.from({ length: 9 }, (_, k) => (k === 4 ? f : "?"))));
-    setLowConf([]); setStep(6);
+    cam.stop(); setPhoto(null);
+    const t = FACE_ORDER.split("").flatMap((f) => (faces[f] ? classifyScan(FACE_ORDER.split("").flatMap((g) => faces[g] ?? Array(9).fill([128, 128, 128]))).tokens.slice(FACE_ORDER.indexOf(f) * 9, FACE_ORDER.indexOf(f) * 9 + 9) : Array.from({ length: 9 }, (_, k) => (k === 4 ? f : "?"))));
+    setTokens(t); setConfidence([]); setFocus([]); setResult(null); setPhase("review");
   };
-  const restart = () => { setSamples(Array(6).fill(null)); setTokens(null); setStep(0); setErrors([]); setResult(null); setLowConf([]); setMode("camera"); };
+  const retake = (i: number) => { setStep(i); setPhase("scan"); setResult(null); prevSample.current = null; };
+  const restart = () => { setFaces({}); setTokens(null); setStep(0); setResult(null); setPhase("scan"); setFocus([]); setSolveErr(null); };
 
+  const diag = useMemo(() => (tokens ? diagnose(tokens, confidence) : null), [tokens, confidence]);
+  const lowConf = useMemo(() => confidence.map((c, i) => (c < 0.2 && i % 9 !== 4 ? i : -1)).filter((i) => i >= 0), [confidence]);
   const paint = (i: number) => {
-    if (!tokens || i % 9 === 4) return; // centers define the faces
-    const t = tokens.slice(); t[i] = brush; setTokens(t); setErrors([]); setResult(null);
-    setLowConf((l) => l.filter((x) => x !== i));
+    if (!tokens || i % 9 === 4) return;
+    const t = tokens.slice(); t[i] = brush; setTokens(t); setResult(null); setSolveErr(null);
+    setConfidence((c) => { const n = c.slice(); n[i] = 1; return n; });
   };
 
-  const validateAndSolve = async () => {
-    if (!tokens) return;
-    if (tokens.includes("?")) { setErrors([`${tokens.filter((t) => t === "?").length} stickers are still unset.`]); return; }
-    const v = validateColors(tokens);
-    if (!v.ok || !v.facelets) { setErrors(v.errors); return; }
-    setErrors([]); setSolving(true);
+  const solve = async () => {
+    if (!diag?.ok || !diag.facelets) return;
+    setSolving(true); setSolveErr(null);
     try {
-      const solution = await solveFacelets(v.facelets);
-      if (!isSolved(applyAlg(v.facelets, solution))) throw new Error("Solver returned a sequence that does not solve this cube.");
-      setResult({ facelets: v.facelets, solution });
-      addScan();
-    } catch (e) { setErrors([`Solver error: ${(e as Error).message}`]); }
+      const f = diag.facelets;
+      const sol = isSolved(f) ? "" : shortSolve3(f) ?? (await solveFacelets(f));
+      if (!isSolved(applyAlg(f, sol))) throw new Error("the solver returned moves that do not solve this cube, so they are not shown");
+      const moves = sol.split(/\s+/).filter(Boolean);
+      const fast: Track = { name: "Fastest", moves, stageOf: moves.map(() => 0), stages: [{ id: "all", title: "Fastest solution", goal: `${moves.length} moves found by a two-phase (Kociemba) search, then replayed on a copy of your cube to check it really solves it.`, how: "Follow each move in order.", moves }] };
+      await new Promise((r) => setTimeout(r, 30));
+      const g = beginnerGuide(f);
+      const beginner: Track | null = g ? { name: "Beginner", moves: g.flatMap((s) => s.moves), stageOf: g.flatMap((s, i) => s.moves.map(() => i)), stages: g } : null;
+      setResult({ facelets: f, fast, beginner });
+      setPhase("guide"); addScan();
+    } catch (e) { setSolveErr(`Could not solve: ${(e as Error).message}.`); }
     finally { setSolving(false); }
   };
 
-  const face = FACES[step];
-  const side = Math.min(dims.w, dims.h) * 0.6, x0 = (dims.w - side) / 2, y0 = (dims.h - side) / 2;
+  const netState = useMemo(() => {
+    if (phase !== "scan") return tokens?.join("") ?? "";
+    return FACE_ORDER.split("").map((f) => {
+      if (f === cur.face && (photoTokens || live)) return (photoTokens ?? live!.tokens).join("");
+      return faces[f] ? faces[f]!.map((c) => nearest(c, pal).face).join("") : "????" + f + "????";
+    }).join("");
+  }, [phase, tokens, faces, cur.face, live, photoTokens, pal]);
+
+  const region = gridRegion(dims.w, dims.h, photo ? zoom : 0.62);
+  const showTokens = photo ? photoTokens : live?.tokens;
+  const captured = SCAN_STEPS.filter((s) => faces[s.face]).length;
 
   return (
     <div className="space-y-6">
-      <div className="max-w-3xl border-l-2 border-ink pl-4 text-sm leading-relaxed">
-        <div><strong className="font-medium">How detection works.</strong> It is deliberately simple: it averages the pixels inside each grid cell and groups them by your cube&apos;s six center colors. Glare, dim light, and similar red/orange stickers can fool it, so <strong>always review the result</strong> — low-confidence stickers are outlined, and impossible cubes are rejected before solving. Assumes the standard color scheme (white opposite yellow, green opposite blue, red opposite orange).</div>
-      </div>
+      <p ref={announce} className="sr-only" aria-live="polite" />
+      <ol className="flex flex-wrap gap-x-6 gap-y-1 text-sm print:hidden" aria-label="Progress">
+        {(["scan", "review", "guide"] as Phase[]).map((p, i) => (
+          <li key={p} className={phase === p ? "font-semibold" : "text-muted"} aria-current={phase === p ? "step" : undefined}>{i + 1}. {p === "scan" ? `Scan faces (${captured}/6)` : p === "review" ? "Check colours" : "Solution guide"}</li>
+        ))}
+      </ol>
 
-      {step <= 5 && (
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-          <div className="space-y-3">
-            <div className="relative card overflow-hidden bg-black min-h-[260px]">
-              <video ref={cam.videoRef} playsInline muted className={`w-full block ${cam.state === "live" ? "" : "invisible absolute"}`} />
-              {cam.state === "live" && (
-                <svg viewBox={`0 0 ${dims.w} ${dims.h}`} className="absolute inset-0 w-full h-full pointer-events-none">
-                  <rect x={x0} y={y0} width={side} height={side} fill="none" stroke="#22d3ee" strokeWidth={Math.max(3, side / 120)} rx={side / 30} />
-                  {Array.from({ length: 9 }, (_, k) => {
-                    const r = Math.floor(k / 3), c = k % 3, cell = side / 3;
-                    return <g key={k}>
-                      <rect x={x0 + c * cell} y={y0 + r * cell} width={cell} height={cell} fill="none" stroke="#22d3ee88" strokeWidth={side / 200} />
-                      {live[k] && <circle cx={x0 + c * cell + cell / 2} cy={y0 + r * cell + cell / 2} r={cell * 0.14} fill={STICKER_COLORS_2D[live[k]]} stroke="#000" strokeWidth={side / 250} />}
-                    </g>;
-                  })}
-                </svg>
-              )}
-              {cam.state !== "live" && (
-                <div className="absolute inset-0 grid place-items-center p-6 text-center text-sm text-muted">
-                  {cam.state === "starting" ? <span className="flex items-center gap-2"><Loader2 className="animate-spin" size={16} /> Waiting for camera permission…</span> : <div>Start the camera to scan, or enter the colours by hand.</div>}
+      {phase === "scan" && (
+        <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+          {/* camera side */}
+          <section className="space-y-3" aria-label="Camera">
+            <div className="relative overflow-hidden rounded-lg border border-line bg-black" style={{ aspectRatio: `${dims.w} / ${dims.h}`, minHeight: 220 }}>
+              <div className="absolute inset-0" style={{ transform: mirror && !photo ? "scaleX(-1)" : undefined }}>
+                <video ref={cam.videoRef} playsInline muted className={`h-full w-full object-contain ${cam.state === "live" && !photo ? "" : "invisible"}`} />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {photo && <img src={photo.url} alt={`Uploaded photo for the ${COLOR_WORD[cur.face]} face`} className="absolute inset-0 h-full w-full object-contain" />}
+                {(cam.state === "live" || photo) && (
+                  <svg viewBox={`0 0 ${dims.w} ${dims.h}`} className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden>
+                    <rect x={region.x} y={region.y} width={region.size} height={region.size} rx={region.size / 30} fill="none" stroke={hold > 0 ? "#22c55e" : "#ffffff"} strokeWidth={Math.max(3, region.size / 110)} />
+                    {hold > 0 && <rect x={region.x} y={region.y + region.size + region.size / 30} width={region.size * hold} height={region.size / 40} fill="#22c55e" />}
+                    {Array.from({ length: 9 }, (_, k) => {
+                      const cell = region.size / 3, x = region.x + (k % 3) * cell, y = region.y + Math.floor(k / 3) * cell;
+                      return <g key={k}>
+                        <rect x={x} y={y} width={cell} height={cell} fill="none" stroke="#ffffffaa" strokeWidth={region.size / 220} />
+                        {showTokens && <circle cx={x + cell / 2} cy={y + cell / 2} r={cell * 0.13} fill={STICKER_COLORS_2D[showTokens[k]]} stroke="#000" strokeWidth={region.size / 160} />}
+                      </g>;
+                    })}
+                  </svg>
+                )}
+              </div>
+              {cam.state !== "live" && !photo && (
+                <div className="absolute inset-0 grid place-items-center p-6 text-center text-sm text-white/85">
+                  {cam.state === "starting" ? <span className="flex items-center gap-2"><Loader2 className="animate-spin" size={16} /> Waiting for camera permission…</span>
+                    : <span>Start the camera and hold the cube inside the square,<br />or upload a photo of each face.</span>}
                 </div>
               )}
             </div>
+            {(cam.state === "live" || photo) && (
+              <p className="text-sm" aria-live="off">
+                {photo ? "Move the slider until the square fits the face, then use the photo."
+                  : !auto ? "Auto-capture is off. Press Capture when the dots match the stickers."
+                  : hold > 0 ? `Hold still… ${Math.round(hold * 100)}%`
+                  : live && !live.centreOk ? <>Looking for the {swatch(cur.face)} {COLOR_WORD[cur.face]} centre in the middle square.</>
+                  : live && !live.still ? "Hold the cube still inside the square." : "Hold steady."}
+              </p>
+            )}
+            {photo && (
+              <label className="flex items-center gap-3 text-sm">Square size
+                <input type="range" min={0.3} max={0.98} step={0.01} value={zoom} onChange={(e) => setZoom(+e.target.value)} className="h-11 flex-1" />
+              </label>
+            )}
             {reason && <p className="border-l-2 border-warn pl-3 text-sm">{reason}</p>}
-            {cam.error && <p className="border-l-2 border-bad pl-3 text-sm text-bad">{cam.error}</p>}
+            {cam.error && <p className="border-l-2 border-bad pl-3 text-sm text-bad" role="alert">{cam.error}</p>}
             <div className="flex flex-wrap gap-2">
-              {cam.state !== "live" ? <button className="btn btn-primary" disabled={!!reason || cam.state === "starting"} onClick={cam.start}><Camera size={15} /> {cam.state === "error" ? "Try camera again" : "Start camera"}</button>
-                : <><button className="btn btn-primary" onClick={capture}>Capture {COLOR_NAMES[face]} face ({step + 1}/6)</button><button className="btn btn-ghost" onClick={cam.stop}>Stop camera</button></>}
-              {step > 0 && <button className="btn btn-ghost" onClick={() => setStep(step - 1)}>Re-scan previous face</button>}
-              <button className="btn btn-ghost" onClick={startManual}>Enter colours by hand</button>
+              {photo ? <>
+                <button className="btn btn-primary" onClick={() => { capture(); setPhoto(null); }}><Check size={15} /> Use photo for {COLOR_WORD[cur.face]}</button>
+                <button className="btn btn-ghost" onClick={() => setPhoto(null)}>Cancel</button>
+              </> : cam.state !== "live" ? (
+                <button className="btn btn-primary" disabled={!!reason || cam.state === "starting"} onClick={() => cam.start()}><Camera size={15} /> {cam.state === "error" ? "Try camera again" : "Start camera"}</button>
+              ) : <>
+                <button className="btn btn-primary" onClick={() => capture()}><Camera size={15} /> Capture {COLOR_WORD[cur.face]}</button>
+                <button className="btn btn-ghost" onClick={cam.stop}><CameraOff size={15} /> Stop</button>
+                <button className="btn btn-ghost" onClick={() => { const nf = cam.facing === "user" ? "environment" : "user"; setMirror(nf === "user"); cam.switchFacing(); }} aria-label={`Switch to ${cam.facing === "user" ? "rear" : "front"} camera`}><SwitchCamera size={15} /> {cam.facing === "user" ? "Rear" : "Front"} camera</button>
+                <button className="btn btn-ghost" aria-pressed={mirror} onClick={() => setMirror((m) => !m)}><FlipHorizontal size={15} /> Mirror</button>
+                {cam.torchSupported && <button className="btn btn-ghost" aria-pressed={cam.torch} onClick={() => cam.setTorch(!cam.torch)}><Flashlight size={15} /> Torch</button>}
+              </>}
+              {!photo && <>
+                <button className="btn btn-ghost" onClick={() => fileRef.current?.click()}><ImageUp size={15} /> Upload photo</button>
+                <input ref={fileRef} type="file" accept="image/*" className="sr-only" tabIndex={-1} aria-hidden onChange={(e) => { onFile(e.target.files?.[0]); e.target.value = ""; }} />
+                <button className="btn btn-ghost" onClick={startManual}><Keyboard size={15} /> Enter colours by hand</button>
+              </>}
             </div>
-          </div>
-          <div className="space-y-4">
-            <div className="card p-4">
+            {cam.state === "live" && !photo && (
+              <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={auto} onChange={(e) => setAuto(e.target.checked)} className="h-5 w-5" /> Auto-capture when the cube is held still for 1 second</label>
+            )}
+          </section>
+
+          {/* guide side */}
+          <section className="space-y-4" aria-label="Scanning guide">
+            <div className="rounded-lg border border-line p-4">
               <div className="eyebrow">Face {step + 1} of 6</div>
-              <div className="mt-1 font-semibold flex items-center gap-2"><span className="h-4 w-4 rounded-sm border border-line" style={{ background: STICKER_COLORS_2D[face] }} /> {COLOR_NAMES[face]} center</div>
-              <p className="text-sm text-muted mt-2">{GUIDE[face]}</p>
-              <p className="text-xs text-muted mt-2">Fill the cyan square with the face, keep it flat to the camera and avoid glare. The dots show what the camera currently sees.</p>
-              {live[4] && live[4] !== face && cam.state === "live" && <p className="text-xs text-warn mt-2">The center looks {COLOR_NAMES[live[4]].toLowerCase()} — expected {COLOR_NAMES[face].toLowerCase()}. Check which face you are showing.</p>}
+              <div className="mt-3 flex gap-4">
+                <RotationHint step={step} />
+                <div className="min-w-0">
+                  <h2 className="flex items-center gap-2 text-lg font-semibold">{swatch(cur.face)} Show the {COLOR_WORD[cur.face]} centre</h2>
+                  <p className="mt-1 text-sm leading-relaxed">{cur.say}</p>
+                  <p className="mt-2 text-xs text-muted">Keep {COLOR_WORD[cur.top]} on top. Fill the square with the face, stickers lined up with the grid.</p>
+                </div>
+              </div>
             </div>
-            <div className="card p-4 flex gap-2 justify-center">
-              {FACES.split("").map((f, i) => <div key={f} className={`h-9 w-9 rounded-sm grid place-items-center text-xs font-bold border ${i === step ? "outline-2 outline-offset-2 outline-fg outline border-line" : "border-line"}`} style={{ background: STICKER_COLORS_2D[f], color: f === "U" || f === "D" ? "#000" : "#fff", opacity: samples[i] ? 1 : 0.35 }}>{samples[i] ? <CheckCircle2 size={16} /> : i + 1}</div>)}
+            <div className="rounded-lg border border-line p-4">
+              <div className="mb-2 flex items-baseline justify-between"><span className="eyebrow">Your cube so far</span><span className="text-xs text-muted">dots show the live reading</span></div>
+              <CubeNet state={netState} label="Cube net filling in as faces are scanned" />
             </div>
-          </div>
+            <div>
+              <div className="eyebrow mb-2">Faces · tap to retake</div>
+              <div className="flex flex-wrap gap-2">
+                {SCAN_STEPS.map((s, i) => (
+                  <button key={s.face} onClick={() => retake(i)} aria-current={i === step ? "step" : undefined}
+                    className={`flex min-h-11 items-center gap-2 rounded-md border px-3 text-sm ${i === step ? "border-fg font-semibold" : "border-line"}`}>
+                    {swatch(s.face)} {COLOR_WORD[s.face]} {faces[s.face] ? <Check size={14} aria-label="captured" /> : null}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <PrivacyNote />
+          </section>
         </div>
       )}
 
-      {step === 6 && tokens && !result && (
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-          <div className="card p-4">
-            <div className="font-display text-xl font-semibold mb-1">{mode === "manual" ? "Paint each sticker" : "Review and correct"}</div>
-            <p className="text-sm text-muted mb-3">Pick a color, then click stickers to fix them. Layout: white face on top, green in front. {lowConf.length > 0 && <span className="text-warn">{lowConf.length} low-confidence stickers are outlined in cyan.</span>}</p>
-            <div className="flex justify-center"><CubeNet state={tokens.join("")} size={30} onSticker={paint} highlight={lowConf} /></div>
-          </div>
-          <div className="space-y-4">
-            <div className="card p-4">
-              <div className="eyebrow mb-2">Colour</div>
-              <div className="grid grid-cols-6 gap-2">{FACES.split("").map((f) => <button key={f} onClick={() => setBrush(f)} aria-label={COLOR_NAMES[f]} title={COLOR_NAMES[f]} className={`aspect-square rounded-sm border ${brush === f ? "outline-2 outline-offset-2 outline-fg outline border-line" : "border-line"}`} style={{ background: STICKER_COLORS_2D[f] }} />)}</div>
+      {phase === "review" && tokens && diag && (
+        <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+          <section className="space-y-3" aria-label="Check the colours">
+            <h2 className="text-lg font-semibold">Check every sticker against your cube</h2>
+            <p className="text-sm text-muted">Pick a colour, then tap any sticker that is wrong. Hold the cube green-front, white-top while you compare. {lowConf.length > 0 && "Outlined stickers were the least certain readings."}</p>
+            <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Paint colour">
+              {FACE_ORDER.split("").map((f) => (
+                <button key={f} role="radio" aria-checked={brush === f} onClick={() => setBrush(f)}
+                  className={`flex min-h-11 items-center gap-2 rounded-md border px-3 text-sm ${brush === f ? "border-fg font-semibold" : "border-line"}`}>{swatch(f)} {COLOR_WORD[f]}</button>
+              ))}
             </div>
-            <div className="card p-4 space-y-3">
-              <button className="btn btn-primary w-full" onClick={validateAndSolve} disabled={solving}>{solving ? <><Loader2 size={15} className="animate-spin" /> Solving…</> : "Check and solve"}</button>
-              <button className="btn btn-ghost w-full" onClick={restart}><RotateCcw size={15} /> Start over</button>
-              {errors.length > 0 && <div className="border-l-2 border-bad pl-3 text-sm space-y-1"><div className="font-semibold text-bad">This cube can&apos;t be solved as entered</div>{errors.map((e) => <div key={e} className="text-muted">• {e}</div>)}<div className="text-xs text-muted pt-1">Usually one or two stickers were misread. Compare with your real cube.</div></div>}
+            <CubeNet state={tokens.join("")} size={22} onSticker={paint} highlight={focus.length ? focus : lowConf} label="Editable cube net" />
+          </section>
+          <section className="space-y-4" aria-label="Validation">
+            {diag.ok ? (
+              <p className="border-l-2 border-good pl-3 text-sm"><strong className="font-medium">This is a valid cube.</strong> Every piece exists once and the corner twists, edge flips and swaps add up the way they must for a real cube.</p>
+            ) : (
+              <div className="space-y-2" role="alert">
+                <p className="text-sm font-medium">This can&apos;t be a real cube yet:</p>
+                <ul className="space-y-2">
+                  {diag.problems.map((p: Problem, i) => (
+                    <li key={i} className="border-l-2 border-bad pl-3 text-sm">
+                      {p.text} {p.stickers.length > 0 && <button className="ml-1 underline underline-offset-2" onClick={() => setFocus(p.stickers)}>Show</button>}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div className="flex flex-wrap gap-2">
+              <button className="btn btn-primary" disabled={!diag.ok || solving} onClick={solve}>{solving ? <><Loader2 className="animate-spin" size={15} /> Solving…</> : "Solve and show the guide"}</button>
+              <button className="btn btn-ghost" onClick={restart}><RotateCcw size={15} /> Start over</button>
             </div>
-          </div>
+            {solveErr && <p className="border-l-2 border-bad pl-3 text-sm text-bad">{solveErr}</p>}
+            <div>
+              <div className="eyebrow mb-2">Retake a face with the camera or a photo</div>
+              <div className="flex flex-wrap gap-2">
+                {SCAN_STEPS.map((s, i) => <button key={s.face} className="flex min-h-11 items-center gap-2 rounded-md border border-line px-3 text-sm" onClick={() => retake(i)}>{swatch(s.face)} {COLOR_WORD[s.face]}</button>)}
+              </div>
+            </div>
+          </section>
         </div>
       )}
 
-      {result && (
+      {phase === "guide" && result && <SolutionGuide result={result} onBack={() => setPhase("review")} onRestart={restart} />}
+    </div>
+  );
+}
+
+function SolutionGuide({ result, onBack, onRestart }: { result: { facelets: string; fast: Track; beginner: Track | null }; onBack: () => void; onRestart: () => void }) {
+  const [which, setWhich] = useState<"fast" | "beginner">("fast");
+  const track = which === "beginner" && result.beginner ? result.beginner : result.fast;
+  const [k, setK] = useState(0); // moves done
+  const [playing, setPlaying] = useState(false);
+  const cube = useRef<CubeHandle>(null);
+  const kRef = useRef(0); kRef.current = k;
+  const n = track.moves.length;
+
+  const jump = useCallback((j: number) => { cube.current?.reset(applyAlg(result.facelets, track.moves.slice(0, j).join(" "))); setK(j); }, [result.facelets, track.moves]);
+  useEffect(() => { setPlaying(false); jump(0); }, [which]); // eslint-disable-line react-hooks/exhaustive-deps
+  const next = useCallback(() => { const j = kRef.current; if (j >= n) { setPlaying(false); return; } if (cube.current?.busy()) return; cube.current?.enqueue([{ text: track.moves[j] }]); setK(j + 1); }, [n, track.moves]);
+  const prev = () => { setPlaying(false); if (k > 0) jump(k - 1); };
+  useEffect(() => { if (playing) { if (kRef.current >= n) jump(0); next(); } }, [playing]); // eslint-disable-line react-hooks/exhaustive-deps
+  const onIdle = () => { if (playing) setTimeout(() => next(), 250); };
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => { if ((e.target as HTMLElement).closest("input,textarea,select")) return; if (e.key === "ArrowRight") { setPlaying(false); next(); } if (e.key === "ArrowLeft") prev(); };
+    window.addEventListener("keydown", key); return () => window.removeEventListener("keydown", key);
+  });
+
+  const stage = track.stages[track.stageOf[Math.min(k, n - 1)] ?? 0];
+  const tok = k < n ? track.moves[k] : null;
+  const text = () => [
+    "Cube solution guide (Checkmate & Twist Academy)",
+    "Hold the cube with GREEN facing you and WHITE on top, the way it was scanned.",
+    "", `Fastest solution (${result.fast.moves.length} moves): ${result.fast.moves.join(" ")}`,
+    ...(result.beginner ? ["", `Beginner method (${result.beginner.moves.length} moves):`, ...result.beginner.stages.map((s, i) => `${i + 1}. ${s.title}: ${s.moves.join(" ") || "(already done)"}`)] : []),
+  ].join("\n");
+  const save = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text()], { type: "text/plain" })); a.download = "cube-solution.txt"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); };
+
+  if (n === 0) return <div className="space-y-3"><p className="border-l-2 border-good pl-3">Your cube is already solved.</p><button className="btn btn-primary" onClick={onRestart}>Scan another cube</button></div>;
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center gap-2 print:hidden">
+        <div className="flex rounded-md border border-line p-0.5" role="tablist" aria-label="Solution method">
+          <button role="tab" aria-selected={which === "fast"} className={`min-h-11 rounded px-4 text-sm ${which === "fast" ? "bg-fg text-bg font-medium" : ""}`} onClick={() => setWhich("fast")}>Fastest · {result.fast.moves.length} moves</button>
+          {result.beginner && <button role="tab" aria-selected={which === "beginner"} className={`min-h-11 rounded px-4 text-sm ${which === "beginner" ? "bg-fg text-bg font-medium" : ""}`} onClick={() => setWhich("beginner")}>Beginner layer by layer · {result.beginner.moves.length} moves</button>}
+        </div>
+        <button className="btn btn-ghost" onClick={() => window.print()}><Printer size={15} /> Print</button>
+        <button className="btn btn-ghost" onClick={save}><Download size={15} /> Save as text</button>
+        <button className="btn btn-ghost" onClick={onBack}>Edit colours</button>
+        <button className="btn btn-ghost" onClick={onRestart}><RotateCcw size={15} /> Scan another</button>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2 lg:items-start print:hidden">
+        <div className="space-y-3">
+          <Cube3D ref={cube} size={3} initialState={result.facelets} speed={2.2} turnable={false} onIdle={onIdle} className="aspect-square w-full max-w-[460px] mx-auto" label="Your scanned cube, following the solution" />
+          <p className="text-center text-xs text-muted">Hold your cube green-front, white-top, as you scanned it. Drag to look around.</p>
+        </div>
         <div className="space-y-4">
-          <div className="border-l-2 border-ok pl-4 text-sm flex flex-wrap items-center gap-3">
-            <span>{result.solution ? <>Valid cube. Solution in <strong>{parseAlg(result.solution).length}</strong> moves (verified with our cube model). Hold the cube with <strong>white on top and green in front</strong>, then follow along.</> : "This cube is already solved."}</span>
-            <button className="btn btn-ghost ml-auto" onClick={restart}>Scan another</button>
+          {which === "beginner" && <div className="rounded-lg border border-line p-4"><div className="eyebrow">Stage {track.stageOf[Math.min(k, n - 1)] + 1} of {track.stages.length}</div><h3 className="mt-1 font-semibold">{stage.title}</h3><p className="mt-1 text-sm">{stage.goal}</p><p className="mt-1 text-sm text-muted">{stage.how}</p></div>}
+          <div aria-live="polite">
+            <div className="eyebrow">{tok ? `Move ${k + 1} of ${n}` : "Done"}</div>
+            <div className="mt-1 font-mono text-6xl font-semibold leading-none tracking-tight">{tok ?? "Solved"}</div>
+            <p className="mt-3 min-h-[3rem] text-base">{tok ? describeMove(tok) : "Every face is one colour. Well done."}</p>
           </div>
-          {result.solution && <div className="font-mono text-sm card p-3 break-words">{result.solution}</div>}
-          <CubeSimulator key={result.facelets} initialState={result.facelets} initialSequence={result.solution ? { label: "Scanned cube solution", moves: parseAlg(result.solution), startState: result.facelets } : null} />
+          <div className="h-2 overflow-hidden rounded-full bg-line" role="progressbar" aria-valuemin={0} aria-valuemax={n} aria-valuenow={k} aria-label="Moves done"><div className="h-full bg-fg transition-[width]" style={{ width: `${(k / n) * 100}%` }} /></div>
+          <div className="flex flex-wrap gap-2">
+            <button className="btn btn-ghost" onClick={prev} disabled={k === 0} aria-label="Previous move"><ChevronLeft size={16} /> Back</button>
+            <button className="btn btn-primary" onClick={() => setPlaying((p) => !p)}>{playing ? <><Pause size={15} /> Pause</> : <><Play size={15} /> {k >= n ? "Replay" : "Play"}</>}</button>
+            <button className="btn btn-ghost" onClick={() => { setPlaying(false); next(); }} disabled={k >= n} aria-label="Next move">Next <ChevronRight size={16} /></button>
+            <button className="btn btn-ghost" onClick={() => { setPlaying(false); jump(0); }}>Restart</button>
+          </div>
+          <ol className="flex flex-wrap gap-1 font-mono text-sm" aria-label="All moves">
+            {track.moves.map((m, i) => (
+              <li key={i}><button onClick={() => { setPlaying(false); jump(i); }} aria-label={`Go to move ${i + 1}, ${m}`}
+                className={`min-h-11 min-w-11 rounded border px-2 ${i === k ? "border-fg font-semibold" : i < k ? "border-transparent text-muted" : "border-line"} ${which === "beginner" && i > 0 && track.stageOf[i] !== track.stageOf[i - 1] ? "ml-3" : ""}`}>{m}</button></li>
+            ))}
+          </ol>
         </div>
-      )}
-      <PrivacyNote />
+      </div>
+
+      {/* print version */}
+      <div className="hidden print:block text-black">
+        <h2 className="text-xl font-semibold">Cube solution guide</h2>
+        <p>Hold the cube with green facing you and white on top, the way it was scanned.</p>
+        <CubeNet state={result.facelets} size={18} label="Scanned cube" />
+        <h3 className="mt-4 font-semibold">Fastest solution · {result.fast.moves.length} moves</h3>
+        <ol className="list-decimal pl-6">{result.fast.moves.map((m, i) => <li key={i}><span className="font-mono font-semibold">{m}</span> {describeMove(m)}</li>)}</ol>
+        {result.beginner && <><h3 className="mt-4 font-semibold">Beginner method</h3>{result.beginner.stages.map((s, i) => <p key={i}><strong>{i + 1}. {s.title}.</strong> {s.goal} <span className="font-mono">{s.moves.join(" ") || "(already done)"}</span></p>)}</>}
+      </div>
     </div>
   );
 }
