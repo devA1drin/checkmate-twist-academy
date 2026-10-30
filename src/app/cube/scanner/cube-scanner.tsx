@@ -186,7 +186,7 @@ export function CubeScanner() {
   const netState = useMemo(() => {
     if (phase !== "scan") return tokens?.join("") ?? "";
     return FACE_ORDER.split("").map((f) => {
-      if (f === cur.face && (photoTokens || live)) return (photoTokens ?? live!.tokens).join("");
+      if (f === cur.face && (photoTokens || live?.centreOk)) return (photoTokens ?? live!.tokens).join("");
       return faces[f] ? faces[f]!.map((c) => nearest(c, pal).face).join("") : "????" + f + "????";
     }).join("");
   }, [phase, tokens, faces, cur.face, live, photoTokens, pal]);
