@@ -41,17 +41,18 @@ npm run verify          # all of the below except videos
 npm run test:cube       # cube model vs cubejs, validator, 100 random solves verified, colour classifier (simulated scans)
 npm run verify:algs     # every OLL/PLL/F2L algorithm solves its case
 npm run verify:content  # every lesson/quiz/puzzle move is legal; cube lesson claims are checked
-npm run test:db         # runs the Supabase migration in PGlite with a stubbed auth schema; 25 RLS/trigger/function checks
+npm run test:db         # runs the Supabase migration in PGlite with a stubbed auth schema; 31 RLS/trigger/function/hardening checks
 npm run verify:videos   # checks every YouTube ID via the oEmbed endpoint (needs internet)
 ```
 
 ## Supabase setup (optional)
 
 1. Create a project at [supabase.com](https://supabase.com). The free tier is enough.
-2. **SQL Editor →** paste and run `supabase/migrations/0001_init.sql`. It is idempotent, so you can re-run it after updates. It creates:
+2. **SQL Editor →** paste and run `supabase/migrations/0001_init.sql`, then `0002_harden_functions.sql`. Both are idempotent, so you can re-run them after updates. Together they create:
    - tables and row-level security;
    - leaderboard and admin functions;
-   - a trigger that creates a profile for each new user.
+   - a trigger that creates a profile for each new user;
+   - a `private` schema (not exposed over the API) holding the `is_admin()` / `is_staff()` helpers used by RLS policies.
 3. **Authentication → Providers →** make sure **Email** is enabled. Magic links use the same provider.
 4. **Authentication → URL Configuration:**
    - set **Site URL** to your app URL (e.g. `http://localhost:3000`);
@@ -78,7 +79,9 @@ Security notes:
 - Users can only read and write their own progress rows.
 - Users cannot change their own role or un-hide moderated posts (enforced by triggers).
 - Leaderboards are exposed only through aggregate functions that respect each user's opt-out.
-- Admin functions check `is_admin()` in the database.
+- Admin functions are callable only by signed-in users and check `private.is_admin()` in the database; anon cannot call them.
+- Trigger functions cannot be called over the API, and every `SECURITY DEFINER` function pins `search_path = ''`.
+- After 0002, the Supabase security advisor still lists the three leaderboard functions (intentionally public; they return only opted-in display names and aggregates) and the three admin functions (signed-in only, each raises `admin only` for non-admins).
 - Never put the `service_role` key in this app.
 
 ## Environment variables
@@ -99,7 +102,8 @@ The site must be served over HTTPS for camera access. Stockfish runs single-thre
 
 Vercel notes:
 
-- Framework preset **Next.js**, default build command (`npm run build`), no `vercel.json` needed.
+- Framework preset **Next.js** (pinned in `vercel.json`, because a project created from the CLI defaults to "Other" and serves only `public/`), default build command (`npm run build`).
+- `.vercelignore` keeps `node_modules`, `.next`, `.env*` and the screenshots out of CLI uploads.
 - `prebuild` copies the Stockfish worker + `.wasm` and the cube-solver worker into `public/`. Those files are also committed, so they are served as plain static assets from `/stockfish/*` and `/workers/*`.
 - Without the two env vars the deployment runs in guest mode (progress in `localStorage`; accounts, leaderboards and community show a notice instead of fake data). `.env*` files are git-ignored except `.env.example`; there are no secrets in the repo.
 

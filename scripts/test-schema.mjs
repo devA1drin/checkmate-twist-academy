@@ -1,10 +1,12 @@
 import { PGlite } from "@electric-sql/pglite";
 import fs from "fs";
 const db = new PGlite();
-const sql = fs.readFileSync(new URL("../supabase/migrations/0001_init.sql", import.meta.url), "utf8");
+const read = (f) => fs.readFileSync(new URL(`../supabase/migrations/${f}`, import.meta.url), "utf8");
+const sql = read("0001_init.sql");
+const sql2 = read("0002_harden_functions.sql");
 // Minimal stand-in for Supabase's auth schema and roles
 await db.exec(`
-create role anon nologin; create role authenticated nologin;
+create role anon nologin; create role authenticated nologin; create role service_role nologin;
 create schema auth;
 create table auth.users (id uuid primary key, email text, raw_user_meta_data jsonb default '{}');
 create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
@@ -12,8 +14,9 @@ grant usage on schema public, auth to anon, authenticated;
 grant execute on function auth.uid() to anon, authenticated;
 `);
 await db.exec(sql);
+await db.exec(sql2);
 await db.exec(`grant select, insert, update, delete on all tables in schema public to anon, authenticated;`);
-await db.exec(sql); // idempotency: running twice must work
+await db.exec(sql); await db.exec(sql2); // idempotency: running the migrations twice must work
 let pass = 0, fail = 0;
 const ok = (c, m) => { if (c) pass++; else { fail++; console.log("FAIL", m); } };
 const A = "11111111-1111-1111-1111-111111111111", B = "22222222-2222-2222-2222-222222222222";
@@ -50,5 +53,12 @@ r = await as(B, `insert into public.lesson_progress (lesson_id) values ('chess:r
 r = await as(null, `select * from public.leaderboard_lessons(5)`); ok(r.rows?.[0]?.lessons == 1, "lessons leaderboard");
 r = await as(B, `insert into public.user_achievements (achievement_id) values ('first-solve') on conflict (user_id, achievement_id) do nothing`); ok(!r.error, "achievement upsert");
 r = await as(B, `insert into public.engine_games (result, level) values ('win', 9)`); ok(r.error, "engine level out of range rejected");
+// hardening (0002)
+r = await as(null, `select public.handle_new_user()`); ok(r.error?.includes("permission denied"), "anon cannot call trigger function");
+r = await as(B, `select public.protect_role()`); ok(r.error?.includes("permission denied"), "authenticated cannot call trigger function");
+r = await as(null, `select public.admin_stats()`); ok(r.error?.includes("permission denied"), "anon cannot call admin_stats");
+r = await db.query(`select count(*)::int n from pg_proc where proname in ('is_admin','is_staff') and pronamespace = 'public'::regnamespace`); ok(r.rows[0].n === 0, "role checks no longer in public schema");
+r = await db.query(`select count(*)::int n from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname in ('public','private') and p.prosecdef and not exists (select 1 from unnest(p.proconfig) c where c like 'search_path=%')`); ok(r.rows[0].n === 0, "every security definer function pins search_path");
+r = await as(null, `select * from public.leaderboard_cube(10)`); ok(r.rows && Object.keys(r.rows[0]).join() === "display_name,best_ms,solves", "leaderboard exposes only display name + aggregates");
 console.log(`Supabase schema test (PGlite with stubbed auth): ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
