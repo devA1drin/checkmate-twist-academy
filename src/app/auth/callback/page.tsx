@@ -22,7 +22,7 @@ export default function Callback() {
     const q = new URLSearchParams(window.location.search);
     const h = new URLSearchParams(window.location.hash.slice(1));
     const rawNext = q.get("next") || "/dashboard";
-    const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/dashboard";
+    const next = /^\/(?![\/\\])/.test(rawNext) ? rawNext : "/dashboard";
     const errCode = q.get("error_code") || h.get("error_code");
     const errDesc = q.get("error_description") || h.get("error_description");
     const done = () => router.replace(next);

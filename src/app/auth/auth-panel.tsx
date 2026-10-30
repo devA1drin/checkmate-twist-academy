@@ -28,7 +28,8 @@ export function AuthPanel() {
   const { configured, user, profile, loading, signOut, refreshProfile } = useAuth();
   const router = useRouter();
   const params = useSearchParams();
-  const next = params.get("next") || "/dashboard";
+  const rawNext = params.get("next") || "/dashboard";
+  const next = /^\/(?![\/\\])/.test(rawNext) ? rawNext : "/dashboard";
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState(""), [password, setPassword] = useState(""), [name, setName] = useState("");
   const [code, setCode] = useState("");
