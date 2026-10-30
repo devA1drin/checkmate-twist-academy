@@ -42,7 +42,7 @@ function bigScramble(n: number, len = n === 3 ? 25 : n === 4 ? 40 : n === 5 ? 60
 }
 /** 2x2 random-state scramble: a long random turn walk, then the inverse of its optimal solution. */
 /** Shortest solution of up to 3 face turns, if one exists (two-phase can return long answers for near-solved cubes). */
-function shortSolve3(state: string): string | null {
+export function shortSolve3(state: string): string | null {
   const faces = ["U", "R", "F", "D", "L", "B"], ms = faces.flatMap((f) => SUFFIXES.map((x) => f + x));
   const go = (s: string, depth: number, path: string[], last: string): string[] | null => {
     if (isSolvedState(3, s)) return path;

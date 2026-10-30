@@ -16,7 +16,8 @@ export function CubeNet({ state, n = 3, size, onSticker, highlight, label = "Cub
           return (
             <rect key={i} x={x + 0.6} y={y + 0.6} width={s - 1.2} height={s - 1.2} rx={s * 0.15}
               fill={STICKER_COLORS_2D[state[i]] ?? "#3a4466"} stroke={hl ? "#22d3ee" : "#060a18"} strokeWidth={hl ? 2 : 0.8}
-              onClick={onSticker ? () => onSticker(i) : undefined} style={onSticker ? { cursor: "pointer" } : undefined}>
+              onClick={onSticker ? () => onSticker(i) : undefined} style={onSticker ? { cursor: "pointer" } : undefined}
+              {...(onSticker ? { role: "button", tabIndex: 0, "aria-label": `${f} face, sticker ${k + 1}`, onKeyDown: (e: React.KeyboardEvent) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSticker(i); } } } : {})}>
               {onSticker && <title>{`${f} face, sticker ${k + 1}`}</title>}
             </rect>
           );

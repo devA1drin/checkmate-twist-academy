@@ -30,30 +30,60 @@ export function cameraUnavailableReason(): string | null {
   return null;
 }
 
-/** getUserMedia wrapper. Video frames stay on this device; nothing is uploaded. */
-export function useCamera() {
+export type Facing = "environment" | "user";
+type TorchCaps = MediaTrackCapabilities & { torch?: boolean };
+
+/**
+ * getUserMedia wrapper. Video frames stay on this device; nothing is uploaded.
+ * Supports switching between the rear and front camera and, where the browser exposes it
+ * (mostly Chrome on Android), the torch.
+ */
+export function useCamera(initialFacing: Facing = "environment") {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const [state, setState] = useState<CameraState>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [facing, setFacing] = useState<Facing>(initialFacing);
+  const facingRef = useRef<Facing>(initialFacing);
+  const [torchSupported, setTorchSupported] = useState(false);
+  const [torch, setTorchState] = useState(false);
+  const [cameraCount, setCameraCount] = useState(0);
 
-  const stop = useCallback(() => {
+  const release = () => {
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
     if (videoRef.current) videoRef.current.srcObject = null;
-    setState("idle");
-  }, []);
+    setTorchSupported(false); setTorchState(false);
+  };
+  const stop = useCallback(() => { release(); setState("idle"); }, []);
 
-  const start = useCallback(async () => {
+  const start = useCallback(async (want?: Facing) => {
     const reason = cameraUnavailableReason();
     if (reason) { setError(reason); setState("error"); return; }
+    const f = want ?? facingRef.current;
+    release();
     setState("starting"); setError(null);
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: f }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
       streamRef.current = stream;
+      facingRef.current = f; setFacing(f);
       if (videoRef.current) { videoRef.current.srcObject = stream; await videoRef.current.play().catch(() => undefined); }
+      const track = stream.getVideoTracks()[0];
+      const caps = (track?.getCapabilities?.() ?? {}) as TorchCaps;
+      setTorchSupported(!!caps.torch);
+      navigator.mediaDevices.enumerateDevices?.().then((d) => setCameraCount(d.filter((x) => x.kind === "videoinput").length)).catch(() => undefined);
       setState("live");
     } catch (e) { setError(cameraErrorMessage(e)); setState("error"); }
+  }, []);
+
+  /** Restart with the other camera. */
+  const switchFacing = useCallback(() => start(facingRef.current === "user" ? "environment" : "user"), [start]);
+
+  const setTorch = useCallback(async (on: boolean) => {
+    const track = streamRef.current?.getVideoTracks()[0];
+    if (!track) return;
+    try { await track.applyConstraints({ advanced: [{ torch: on } as MediaTrackConstraintSet] }); setTorchState(on); }
+    catch { setTorchSupported(false); }
   }, []);
 
   /** Draw the current frame onto a canvas (local only). */
@@ -67,5 +97,5 @@ export function useCamera() {
   }, []);
 
   useEffect(() => () => { streamRef.current?.getTracks().forEach((t) => t.stop()); }, []);
-  return { videoRef, state, error, start, stop, snapshot, setError };
+  return { videoRef, state, error, start, stop, snapshot, setError, facing, switchFacing, torchSupported, torch, setTorch, cameraCount };
 }

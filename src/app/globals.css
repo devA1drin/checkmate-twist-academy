@@ -155,3 +155,9 @@ body {
 .list-row { display: flex; align-items: center; gap: .9rem; padding: .8rem 0; border-bottom: 1px solid var(--border); min-height: 56px; }
 .pb-safe { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
 @media (min-width: 1024px) { .pb-safe { padding-bottom: 0; } }
+
+/* Printing (e.g. the cube solution guide): page content only, black on white. */
+@media print {
+  body > header, header.sticky, footer, nav[aria-label="Sections"], .print\:hidden { display: none !important; }
+  html, body { background: #fff !important; color: #000 !important; }
+}
