@@ -1,13 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { GuestBanner } from "@/components/layout/guest-banner";
+import { BottomNav } from "@/components/layout/bottom-nav";
+import { NetworkStatus } from "@/components/layout/network-status";
 
 const text = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-text", display: "swap" });
-const display = Fraunces({ subsets: ["latin"], variable: "--font-display", axes: ["opsz", "SOFT"], display: "swap" });
 const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
@@ -21,12 +22,14 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${text.variable} ${display.variable} ${mono.variable} antialiased min-h-screen flex flex-col`}>
+      <body className={`${text.variable} ${mono.variable} antialiased min-h-screen flex flex-col`}>
         <Providers>
           <Navbar />
           <GuestBanner />
-          <main className="flex-1">{children}</main>
+          <NetworkStatus />
+          <main id="main" className="flex-1 pb-safe">{children}</main>
           <Footer />
+          <BottomNav />
         </Providers>
       </body>
     </html>

@@ -1,11 +1,13 @@
-import { PageHeader } from "@/components/ui/page-header";
-import { Community } from "./community";
+import Link from "next/link";
+import { Hub } from "@/components/layout/hub";
 export const metadata = { title: "Community" };
 export default function Page() {
   return (
-    <div className="mx-auto max-w-4xl px-4 sm:px-6 py-12">
-      <PageHeader eyebrow="Community" title="Discussion" desc="Questions, games, solves. Be kind: moderators can hide posts that break that rule." />
-      <Community />
-    </div>
+    <Hub section="Community" title="Community" desc="Ask for help, share a game or a solve, add friends and challenge them. You need a free account to post or add friends.">
+      <div className="flex flex-wrap gap-3 mb-10">
+        <Link href="/forum" className="btn btn-primary">Open the forum</Link>
+        <Link href="/friends" className="btn btn-ghost">Find friends</Link>
+      </div>
+    </Hub>
   );
 }

@@ -3,7 +3,13 @@ import { createContext, useContext, useEffect, useState, useCallback } from "rea
 import type { Session, User } from "@supabase/supabase-js";
 import { backendConfigured, getSupabase } from "./supabase/client";
 
-export interface Profile { id: string; username: string | null; display_name: string | null; role: "student" | "moderator" | "admin" }
+export interface Profile {
+  id: string; username: string | null; display_name: string | null; role: "student" | "moderator" | "admin";
+  interests: "chess" | "cube" | "both" | null; skill_level: "new" | "beginner" | "intermediate" | "advanced" | null; onboarded: boolean;
+  tz: string; allow_friend_requests: boolean; allow_challenges: "everyone" | "friends" | "nobody";
+  profile_visibility: "public" | "friends" | "private"; show_online: boolean; show_on_leaderboard: boolean;
+}
+export const PROFILE_COLUMNS = "id, username, display_name, role, interests, skill_level, onboarded, tz, allow_friend_requests, allow_challenges, profile_visibility, show_online, show_on_leaderboard";
 interface AuthCtx {
   configured: boolean;
   loading: boolean;
@@ -23,7 +29,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loadProfile = useCallback(async (uid: string | undefined) => {
     const sb = getSupabase();
     if (!sb || !uid) { setProfile(null); return; }
-    const { data } = await sb.from("profiles").select("id, username, display_name, role").eq("id", uid).maybeSingle();
+    const { data } = await sb.from("profiles").select(PROFILE_COLUMNS).eq("id", uid).maybeSingle();
     setProfile((data as Profile) ?? null);
   }, []);
 

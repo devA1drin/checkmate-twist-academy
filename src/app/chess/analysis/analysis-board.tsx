@@ -44,7 +44,7 @@ export function AnalysisBoard() {
     } catch (e) { setMsg({ ok: false, text: `Could not read that as FEN or PGN: ${(e as Error).message}` }); }
   }, []);
 
-  useEffect(() => { const f = q.get("fen"); if (f) load(f); }, [q, load]);
+  useEffect(() => { const f = q.get("pgn") || q.get("fen"); if (f) load(f); }, [q, load]);
 
   const fen = idx === 0 ? root : nodes[idx - 1].fen;
   const game = useMemo(() => new Chess(fen), [fen]);
