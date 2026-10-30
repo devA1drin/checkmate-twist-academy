@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { RefreshCw, Trash2, Eye } from "lucide-react";
+import { RefreshCw, Trash2 } from "lucide-react";
 import { CubeNet } from "@/components/cube/cube-net";
 import { applyAlg, randomMoveScramble, SOLVED } from "@/lib/cube/model";
 import { randomStateScramble } from "@/lib/cube/solver-client";
@@ -105,23 +105,23 @@ export function CubeTimer() {
 
   const state = scramble ? applyAlg(SOLVED, scramble.text) : SOLVED;
   const inspectLabel = inspectLeft > 0 ? Math.ceil(inspectLeft).toString() : inspectLeft > -2 ? "+2" : "DNF";
-  const color = phase === "armed" ? (ready ? "text-emerald-400" : "text-red-400") : phase === "inspecting" ? "text-amber-400" : "";
+  const color = phase === "armed" ? (ready ? "text-ok" : "text-bad") : phase === "inspecting" ? "text-warn" : "";
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
       <div className="space-y-4">
-        <div className="card p-4">
+        <div>
           <div className="flex items-center justify-between gap-2 mb-2">
-            <span className="text-xs text-muted uppercase tracking-wider">Scramble {scramble?.kind === "random-move" && <span className="text-amber-400 normal-case">(random-move fallback — solver unavailable)</span>}</span>
-            <button className="btn btn-ghost !py-1" onClick={newScramble} disabled={phase !== "idle"}><RefreshCw size={14} /> New</button>
+            <span className="eyebrow">Scramble {scramble?.kind === "random-move" && <span className="text-warn normal-case">(random-move fallback — solver unavailable)</span>}</span>
+            <button className="btn btn-ghost !py-1" onClick={newScramble} disabled={phase !== "idle"}><RefreshCw size={14} aria-hidden /> New scramble</button>
           </div>
           <div className="font-mono text-lg sm:text-xl leading-relaxed min-h-[3.5rem]">{scramble?.text ?? <span className="text-muted text-base">Generating random-state scramble…</span>}</div>
         </div>
         <div role="button" tabIndex={0} aria-label="Timer: hold space or touch and hold, release to start, press to stop"
-          className="card glow select-none touch-none grid place-items-center py-16 sm:py-24 cursor-pointer"
+          className="border-y border-ink select-none touch-none grid place-items-center py-16 sm:py-24 cursor-pointer"
           onTouchStart={(e) => { e.preventDefault(); press(); }} onTouchEnd={(e) => { e.preventDefault(); release(); }}
           onMouseDown={press} onMouseUp={release}>
-          <div className={`font-mono font-bold tabular-nums text-6xl sm:text-8xl ${color}`}>
+          <div className={`font-mono font-medium tabular-nums text-7xl sm:text-9xl tracking-tight ${color}`}>
             {phase === "inspecting" || (phase === "armed" && inspectStart.current) ? inspectLabel : formatTime(display)}
           </div>
           <div className="text-sm text-muted mt-4 text-center px-4">
@@ -132,7 +132,7 @@ export function CubeTimer() {
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-4 text-sm">
-          <label className="inline-flex items-center gap-2"><input type="checkbox" checked={inspection} onChange={(e) => setInspection(e.target.checked)} disabled={phase !== "idle"} /> <Eye size={15} /> WCA inspection (15 s)</label>
+          <label className="inline-flex items-center gap-2"><input type="checkbox" checked={inspection} onChange={(e) => setInspection(e.target.checked)} disabled={phase !== "idle"} /> WCA inspection (15 s)</label>
         </div>
       </div>
       <div className="space-y-4">
@@ -149,11 +149,11 @@ export function CubeTimer() {
               {[...solves].reverse().map((s: Solve, i) => (
                 <tr key={s.id} className="border-b border-line/60 last:border-0" title={s.scramble}>
                   <td className="py-1.5 px-2 text-muted text-xs">{solves.length - i}</td>
-                  <td className="font-mono">{s.penalty === "DNF" ? `DNF (${formatTime(s.timeMs)})` : formatTime(effectiveTime(s))}{s.penalty === "+2" && <span className="text-amber-400 text-xs">+</span>}</td>
+                  <td className="font-mono">{s.penalty === "DNF" ? `DNF (${formatTime(s.timeMs)})` : formatTime(effectiveTime(s))}{s.penalty === "+2" && <span className="text-warn text-xs">+</span>}</td>
                   <td className="text-right whitespace-nowrap">
-                    <button className={`text-xs px-1.5 rounded ${s.penalty === "+2" ? "bg-amber-400/20 text-amber-400" : "text-muted hover:text-fg"}`} onClick={() => updateSolve(s.id, { penalty: s.penalty === "+2" ? null : "+2" })}>+2</button>
-                    <button className={`text-xs px-1.5 rounded ${s.penalty === "DNF" ? "bg-red-400/20 text-red-400" : "text-muted hover:text-fg"}`} onClick={() => updateSolve(s.id, { penalty: s.penalty === "DNF" ? null : "DNF" })}>DNF</button>
-                    <button className="text-muted hover:text-red-400 px-1" aria-label="Delete solve" onClick={() => deleteSolve(s.id)}><Trash2 size={13} /></button>
+                    <button className={`text-xs px-1.5 rounded ${s.penalty === "+2" ? "bg-warn/20 text-warn" : "text-muted hover:text-fg"}`} onClick={() => updateSolve(s.id, { penalty: s.penalty === "+2" ? null : "+2" })}>+2</button>
+                    <button className={`text-xs px-1.5 rounded ${s.penalty === "DNF" ? "bg-bad/20 text-bad" : "text-muted hover:text-fg"}`} onClick={() => updateSolve(s.id, { penalty: s.penalty === "DNF" ? null : "DNF" })}>DNF</button>
+                    <button className="text-muted hover:text-bad px-1" aria-label="Delete solve" onClick={() => deleteSolve(s.id)}><Trash2 size={13} /></button>
                   </td>
                 </tr>
               ))}

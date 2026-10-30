@@ -2,7 +2,7 @@
 import { Chess } from "chess.js";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, FlipVertical2, Copy, Upload, Cpu, Loader2, AlertTriangle, Swords } from "lucide-react";
+import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, FlipVertical2, Copy, Upload, Loader2, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { Board, tryMove } from "@/components/chess/board";
 import { EvalBar } from "@/components/chess/eval-bar";
@@ -104,27 +104,27 @@ export function AnalysisBoard() {
           <button className="btn btn-ghost !px-2" aria-label="End" onClick={() => setIdx(nodes.length)}><ChevronLast size={16} /></button>
           <button className="btn btn-ghost" onClick={() => setOrientation(orientation === "white" ? "black" : "white")}><FlipVertical2 size={15} /> Flip</button>
           <button className="btn btn-ghost" onClick={() => { navigator.clipboard?.writeText(fen); setMsg({ ok: true, text: "FEN copied." }); }}><Copy size={15} /> FEN</button>
-          <Link className="btn btn-ghost" href={`/chess/play?fen=${encodeURIComponent(fen)}`}><Swords size={15} /> Play from here</Link>
+          <Link className="btn btn-ghost" href={`/chess/play?fen=${encodeURIComponent(fen)}`}>Play from here</Link>
         </div>
-        {over && <div className="mt-3 rounded-lg border border-violet/40 bg-violet/10 p-2 text-sm">{over}</div>}
+        {over && <p className="mt-3 border-l-2 border-chess pl-3 text-sm font-medium">{over}</p>}
       </div>
 
       <div className="space-y-4 min-w-0">
         <div className="card p-4">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 font-semibold"><Cpu size={18} className="text-aqua" /> Stockfish 19 <span className="text-xs text-muted font-normal">(lite WASM, local)</span></div>
+            <div><div className="font-semibold">Stockfish 19</div><div className="text-xs text-muted">Lite WASM build, running in this tab</div></div>
             <div className="flex items-center gap-2 text-sm">
               <select className="input !py-1 !w-auto" value={multipv} onChange={(e) => setMultipv(+e.target.value)} aria-label="Number of lines">{[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n} line{n > 1 ? "s" : ""}</option>)}</select>
               <label className="inline-flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked={engineOn} onChange={(e) => setEngineOn(e.target.checked)} /> On</label>
             </div>
           </div>
-          <div className="mt-3 space-y-2 text-sm">
+          <div className="mt-3 text-sm border-t border-line pt-2">
             {status === "loading" && <div className="text-muted flex items-center gap-2"><Loader2 className="animate-spin" size={15} /> Loading engine…</div>}
-            {status === "error" && <div className="text-red-400 flex items-center gap-2"><AlertTriangle size={15} /> Engine failed to load: {error}</div>}
+            {status === "error" && <div className="text-bad flex items-center gap-2"><AlertTriangle size={15} /> Engine failed to load: {error}</div>}
             {status === "ready" && engineOn && !over && lines.length === 0 && <div className="text-muted flex items-center gap-2"><Loader2 className="animate-spin" size={15} /> Thinking…</div>}
             {engineOn && !over && lines.map((l) => (
-              <button key={l.multipv} className="w-full text-left rounded-lg bg-surface-2 hover:ring-1 hover:ring-electric p-2 flex gap-3" onClick={() => { const u = l.pv[0]; if (u) onMove(u.slice(0, 2), u.slice(2, 4)); }}>
-                <span className={`font-mono font-bold w-14 shrink-0 ${(l.mate ?? l.scoreCp ?? 0) >= 0 ? "text-aqua" : "text-violet"}`}>{formatScore(l)}</span>
+              <button key={l.multipv} className="w-full text-left border-t border-line first:border-t-0 hover:bg-surface-2 px-1 py-2 flex gap-3" onClick={() => { const u = l.pv[0]; if (u) onMove(u.slice(0, 2), u.slice(2, 4)); }}>
+                <span className={`font-mono font-bold w-14 shrink-0 tabular-nums`}>{formatScore(l)}</span>
                 <span className="font-mono text-xs leading-5 truncate">{pvToSan(fen, l.pv).join(" ")}</span>
               </button>
             ))}
@@ -133,26 +133,26 @@ export function AnalysisBoard() {
         </div>
 
         <div className="card p-4">
-          <div className="font-semibold mb-2">Moves</div>
+          <div className="eyebrow mb-2">Moves</div>
           {nodes.length === 0 ? <p className="text-sm text-muted">Make a move on the board or import a game.</p> : (
             <div className="flex flex-wrap gap-1 font-mono text-sm max-h-48 overflow-auto">
               {nodes.map((n, i) => {
                 const k = i + (blackFirst ? 1 : 0), num = startNo + Math.floor(k / 2);
-                return <button key={i} onClick={() => setIdx(i + 1)} className={`rounded px-1.5 py-0.5 ${idx === i + 1 ? "bg-electric text-white" : "hover:bg-surface-2"}`}>{k % 2 === 0 ? `${num}.` : i === 0 ? `${num}...` : ""}{n.san}</button>;
+                return <button key={i} onClick={() => setIdx(i + 1)} className={`rounded-sm px-1.5 py-0.5 ${idx === i + 1 ? "bg-fg text-bg" : "hover:bg-surface-2"}`}>{k % 2 === 0 ? `${num}.` : i === 0 ? `${num}...` : ""}{n.san}</button>;
               })}
             </div>
           )}
         </div>
 
         <div className="card p-4 space-y-2">
-          <div className="font-semibold">Import FEN or PGN</div>
+          <div className="eyebrow">Import FEN or PGN</div>
           <textarea className="input font-mono text-xs h-24" placeholder="Paste a FEN (e.g. from the photo scanner) or a full PGN…" value={importText} onChange={(e) => setImportText(e.target.value)} />
           <div className="flex flex-wrap gap-2">
             <button className="btn btn-primary" onClick={() => load(importText)}><Upload size={15} /> Load</button>
             <button className="btn btn-ghost" onClick={() => { setRoot(START); setNodes([]); setIdx(0); setMsg(null); }}>New board</button>
             <button className="btn btn-ghost" onClick={() => { navigator.clipboard?.writeText(pgn); setMsg({ ok: true, text: "PGN copied." }); }}><Copy size={15} /> Copy PGN</button>
           </div>
-          {msg && <p className={`text-sm ${msg.ok ? "text-emerald-400" : "text-red-400"}`}>{msg.text}</p>}
+          {msg && <p className={`text-sm ${msg.ok ? "text-ok" : "text-bad"}`}>{msg.text}</p>}
           <p className="text-xs text-muted font-mono break-all">{fen}</p>
         </div>
       </div>

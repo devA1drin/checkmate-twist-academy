@@ -9,9 +9,9 @@ export function ThemeToggle() {
   useEffect(() => setMounted(true), []);
   const dark = !mounted || resolvedTheme === "dark";
   return (
-    <button aria-label={`Switch to ${dark ? "light" : "dark"} mode`} onClick={() => setTheme(dark ? "light" : "dark")}
-      className="h-9 w-9 grid place-items-center rounded-xl border border-line bg-surface-2 hover:border-electric transition">
-      {dark ? <Sun size={17} /> : <Moon size={17} />}
+    <button aria-label={`Switch to ${dark ? "light" : "dark"} theme`} title={`Switch to ${dark ? "light" : "dark"} theme`} onClick={() => setTheme(dark ? "light" : "dark")}
+      className="h-8 w-8 grid place-items-center rounded-md border border-line text-muted hover:text-fg hover:border-fg">
+      {dark ? <Sun size={15} /> : <Moon size={15} />}
     </button>
   );
 }

@@ -8,7 +8,7 @@
  */
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, RoundedBox } from "@react-three/drei";
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { faceletGeometry, MOVE_DEFS, ParsedMove, SOLVED } from "@/lib/cube/model";
 
@@ -153,6 +153,15 @@ function CubeScene({ engine, speed, onMoveDone, onIdle, initialState }: { engine
 
 export const Cube3D = forwardRef<CubeHandle, Props>(function Cube3D({ initialState = SOLVED, speed = 4, onMoveDone, onIdle, className, autoRotate }, ref) {
   const engine = useRef<Engine>({ queue: [], current: null, pendingReset: null });
+  // Respect prefers-reduced-motion: turns become near-instant and the camera does not drift.
+  const [reduce, setReduce] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduce(mq.matches);
+    const on = (e: MediaQueryListEvent) => setReduce(e.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
   useImperativeHandle(ref, () => ({
     enqueue: (moves) => { engine.current.queue.push(...moves); },
     reset: (state) => { engine.current.queue = []; engine.current.pendingReset = state; },
@@ -166,8 +175,8 @@ export const Cube3D = forwardRef<CubeHandle, Props>(function Cube3D({ initialSta
         <ambientLight intensity={0.85} />
         <directionalLight position={[5, 8, 6]} intensity={1.2} />
         <directionalLight position={[-6, -4, -5]} intensity={0.45} />
-        <CubeScene engine={engine} speed={speed} onMoveDone={onMoveDone} onIdle={onIdle} initialState={initialState} />
-        <OrbitControls enablePan={false} minDistance={5} maxDistance={12} autoRotate={autoRotate} autoRotateSpeed={1.2} />
+        <CubeScene engine={engine} speed={reduce ? 40 : speed} onMoveDone={onMoveDone} onIdle={onIdle} initialState={initialState} />
+        <OrbitControls enablePan={false} minDistance={5} maxDistance={12} autoRotate={autoRotate && !reduce} autoRotateSpeed={1.2} />
       </Canvas>
     </div>
   );

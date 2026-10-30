@@ -3,8 +3,8 @@ import { PuzzleTrainer } from "./trainer";
 export const metadata = { title: "Tactics Puzzles" };
 export default function Page() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
-      <PageHeader eyebrow="Chess Academy" title="Tactics Puzzles" desc="236 real puzzles from the Lichess puzzle database (CC0), selected for high popularity and many plays, spread across 16 themes and ratings from ~600 to ~2500. Every solution line was replayed and validated with chess.js." />
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
+      <PageHeader eyebrow="Chess · Tactics" title="Puzzles" desc="236 puzzles from the Lichess database (CC0), chosen from the most-played and best-rated, covering 16 themes and ratings from about 600 to 2500. Find the best move; the opponent replies automatically." />
       <PuzzleTrainer />
     </div>
   );

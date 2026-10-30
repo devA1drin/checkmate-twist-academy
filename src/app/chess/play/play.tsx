@@ -3,7 +3,7 @@ import { Chess } from "chess.js";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Flag, RotateCcw, Undo2, Cpu, Loader2, AlertTriangle, Trophy } from "lucide-react";
+import { Flag, RotateCcw, Undo2, Loader2, AlertTriangle } from "lucide-react";
 import { Board, tryMove } from "@/components/chess/board";
 import { useEngine } from "@/lib/chess/use-engine";
 import { LEVELS } from "@/lib/chess/engine";
@@ -77,16 +77,16 @@ export function PlayVsEngine() {
         <Board id="play" fen={fen} orientation={color === "w" ? "white" : "black"} onMove={onMove} lastMove={last ? [last.from, last.to] : null} />
         <div className="mt-3 flex items-center gap-2 text-sm min-h-6">
           {status === "loading" && <><Loader2 size={15} className="animate-spin" /> Loading Stockfish…</>}
-          {status === "error" && <span className="text-red-400 flex items-center gap-1.5"><AlertTriangle size={15} /> Engine failed to load: {error}</span>}
-          {status === "ready" && !over && (thinking ? <><Cpu size={15} className="text-aqua animate-pulse" /> Stockfish is thinking…</> : game.turn() === color ? <span>Your move ({color === "w" ? "White" : "Black"}){game.inCheck() ? " — you are in check!" : ""}</span> : null)}
+          {status === "error" && <span className="text-bad flex items-center gap-1.5"><AlertTriangle size={15} /> Engine failed to load: {error}</span>}
+          {status === "ready" && !over && (thinking ? <span className="text-muted">Stockfish is thinking…</span> : game.turn() === color ? <span>Your move ({color === "w" ? "White" : "Black"}){game.inCheck() ? ". You are in check." : ""}</span> : null)}
         </div>
-        {over && <div className={`mt-3 rounded-xl border p-3 flex items-center gap-2 ${won ? "border-emerald-400/50 bg-emerald-400/10" : "border-violet/40 bg-violet/10"}`}>{won && <Trophy size={18} className="text-emerald-400" />}<span className="font-semibold">{over}</span><Link className="ml-auto text-sm text-electric hover:underline" href={`/chess/analysis?fen=${encodeURIComponent(fen)}`}>Analyse final position</Link></div>}
+        {over && <div className={`mt-3 border-l-2 pl-3 py-1 flex flex-wrap items-baseline gap-x-4 gap-y-1 ${won ? "border-ok" : "border-ink"}`}><span className={`font-display text-xl font-semibold ${won ? "text-ok" : ""}`}>{over}</span><Link className="link text-sm" href={`/chess/analysis?fen=${encodeURIComponent(fen)}`}>Analyse final position</Link></div>}
       </div>
       <div className="space-y-4">
         <div className="card p-4 space-y-3">
-          <label className="block text-sm font-semibold">Strength</label>
-          <select className="input" value={level} onChange={(e) => setLevel(+e.target.value)}>{LEVELS.map((l) => <option key={l.level} value={l.level}>{l.label}</option>)}</select>
-          <div className="text-sm font-semibold">Play as</div>
+          <label className="eyebrow block" htmlFor="play-level">Strength</label>
+          <select id="play-level" className="input" value={level} onChange={(e) => setLevel(+e.target.value)}>{LEVELS.map((l) => <option key={l.level} value={l.level}>{l.label}</option>)}</select>
+          <div className="eyebrow">Play as</div>
           <div className="flex gap-2">
             <button className={`btn ${color === "w" ? "btn-primary" : "btn-ghost"}`} onClick={() => newGame("w")}>White</button>
             <button className={`btn ${color === "b" ? "btn-primary" : "btn-ghost"}`} onClick={() => newGame("b")}>Black</button>
@@ -100,7 +100,7 @@ export function PlayVsEngine() {
           {startFen !== START && <p className="text-xs text-muted">Starting from a custom position (FEN).</p>}
         </div>
         <div className="card p-4">
-          <div className="font-semibold mb-2">Moves</div>
+          <div className="eyebrow mb-2">Moves</div>
           {history.length === 0 ? <p className="text-sm text-muted">{color === "b" && game.turn() === "w" ? "Stockfish moves first." : "Make your first move."}</p> : (
             <ol className="grid grid-cols-[auto_1fr_1fr] gap-x-3 gap-y-0.5 font-mono text-sm max-h-72 overflow-auto">
               {(() => {

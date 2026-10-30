@@ -81,11 +81,11 @@ export function PuzzleTrainer() {
     const nextStep = step + 1;
     if (nextStep >= puzzle.moves.length || r.game.isCheckmate()) {
       setStep(puzzle.moves.length); setState(recorded.current ? "failed" : "solved");
-      setFeedback(recorded.current ? "Solved (with a mistake)." : "Puzzle solved!");
+      setFeedback(recorded.current ? "Solved (with a mistake)." : "Solved.");
       record(true);
       return true;
     }
-    setFeedback("Correct! Keep going…");
+    setFeedback("Correct. Keep going.");
     setStep(nextStep);
     later(() => {
       const u = puzzle.moves[nextStep];
@@ -135,7 +135,7 @@ export function PuzzleTrainer() {
               <span className="chip">Rating {puzzle.rating}</span>
             </div>
             <div className="flex flex-wrap gap-1">{puzzle.themes.slice(0, 6).map((t) => <span key={t} className="chip">{pretty(t)}</span>)}</div>
-            <div className={`flex items-center gap-2 text-sm font-medium ${state === "solved" ? "text-emerald-400" : feedback.startsWith("Not") ? "text-red-400" : ""}`}>
+            <div className={`flex items-center gap-2 text-sm font-medium ${state === "solved" ? "text-ok" : feedback.startsWith("Not") ? "text-bad" : ""}`}>
               {state === "solved" && <CheckCircle2 size={17} />}{feedback.startsWith("Not") && <XCircle size={17} />}{feedback || "Watch the opponent's move…"}
             </div>
             {state !== "playing" && <p className="font-mono text-xs text-muted">{solutionSan.slice(1).join(" ")}</p>}

@@ -1,115 +1,155 @@
 import Link from "next/link";
-import { ArrowRight, Box, Brain, Camera, Crown, Cpu, Library, Medal, PlayCircle, ShieldCheck, Timer, Trophy, Users, Zap, ScanLine, GraduationCap } from "lucide-react";
-import { HeroVisual } from "@/components/home/hero-visual";
-import { Reveal } from "@/components/ui/reveal";
+import { ArrowRight } from "lucide-react";
 import puzzles from "@/data/puzzles.json";
 import videos from "@/data/videos.json";
 import { CHESS_LESSONS } from "@/data/chess-lessons";
 import { CUBE_LESSONS } from "@/data/cube-lessons";
+import { OLL, PLL, F2L } from "@/data/algorithms";
+import { CaseDiagram } from "@/components/cube/case-diagram";
+import { MateBoard } from "@/components/home/mate-board";
+import { TPermCube } from "@/components/home/tperm-cube";
 
-const features = [
-  { icon: Crown, title: "Chess Academy", desc: "Rules to rook endgames: openings with real move orders, middlegame plans, Lucena, Philidor and opposition — on interactive boards.", href: "/chess", color: "from-electric to-violet" },
-  { icon: Box, title: "Cube Academy", desc: "Beginner layer-by-layer, full CFOP, Roux, ZZ, Petrus and other puzzles, taught step by step.", href: "/cube", color: "from-violet to-aqua" },
-  { icon: Cpu, title: "Stockfish 19 in your browser", desc: "Play at 8 strength levels or analyse any FEN/PGN with live evaluation and best lines. Runs locally in a Web Worker.", href: "/chess/analysis", color: "from-aqua to-electric" },
-  { icon: Box, title: "3D Cube Simulator", desc: "A real cube model with face, slice and wide moves, random-state scrambles and a verified two-phase solver.", href: "/cube/simulator", color: "from-electric to-aqua" },
-  { icon: Library, title: "Algorithm Library", desc: "57 OLL + 21 PLL + F2L, each machine-verified, with diagrams generated from cube state and one-click playback.", href: "/cube/algorithms", color: "from-violet to-electric" },
-  { icon: Brain, title: "Tactics Trainer", desc: `${puzzles.length} real puzzles from the Lichess database (CC0), every line validated move-by-move.`, href: "/chess/puzzles", color: "from-electric to-violet" },
-  { icon: Timer, title: "Speed Timer", desc: "WCA-style scrambles, 15s inspection, +2/DNF, ao5/ao12 and session stats.", href: "/cube/timer", color: "from-aqua to-violet" },
-  { icon: ScanLine, title: "Cube Camera Scanner", desc: "Show each face to your camera, correct any sticker, validate the cube and watch it solve in 3D.", href: "/cube/scanner", color: "from-violet to-aqua" },
-  { icon: Camera, title: "Board Photo → Analysis", desc: "Load a photo of a chessboard, set the pieces with an editor over the image, then analyse with Stockfish.", href: "/chess/scanner", color: "from-electric to-aqua" },
-  { icon: PlayCircle, title: "Video Center", desc: `${videos.length} hand-picked tutorials from J Perm, GothamChess, Naroditsky and more — every link verified.`, href: "/videos", color: "from-aqua to-electric" },
-  { icon: Medal, title: "Quizzes & Achievements", desc: "Check your knowledge, collect badges and track everything on your dashboard.", href: "/quizzes", color: "from-violet to-electric" },
-  { icon: Users, title: "Leaderboards & Community", desc: "Compete on real solve times and discuss with other learners (requires the backend).", href: "/community", color: "from-electric to-violet" },
+const EXCERPT = ["pll-t", "pll-ua", "pll-ub", "pll-h", "pll-z", "pll-jb"];
+
+const TOOLS: [string, string, string][] = [
+  ["/chess/analysis", "Analysis board", "Paste a FEN or PGN and read Stockfish 19's top lines, up to five at once."],
+  ["/chess/play", "Play Stockfish", "Eight levels, from one that hangs pieces to full strength. Start from any position."],
+  ["/chess/puzzles", "Tactics trainer", `${puzzles.length} puzzles from the Lichess database, filtered by theme and rating.`],
+  ["/cube/simulator", "Cube simulator", "Turn with the keyboard, scramble from a random state, and step through a computed solution."],
+  ["/cube/timer", "Timer", "WCA-style inspection, +2 and DNF, best single, ao5 and ao12."],
+  ["/cube/algorithms", "Algorithm library", `${OLL.length} OLL, ${PLL.length} PLL and ${F2L.length} F2L cases with diagrams drawn from the cube state.`],
+  ["/quizzes", "Quizzes", "Five short quizzes on rules, openings, endgames, notation and CFOP."],
+  ["/videos", "Videos", `${videos.length} tutorials we found useful, from J Perm, GothamChess, Daniel Naroditsky and others.`],
 ];
 
 export default function Home() {
+  const excerpt = EXCERPT.map((id) => PLL.find((a) => a.id === id)!).filter(Boolean);
   return (
-    <div className="overflow-hidden">
-      <section className="relative bg-grid">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-40 -left-40 h-[520px] w-[520px] rounded-full bg-electric/25 blur-[120px]" />
-          <div className="absolute top-20 right-0 h-[420px] w-[420px] rounded-full bg-violet/25 blur-[120px]" />
-          <div className="absolute bottom-0 left-1/3 h-[300px] w-[300px] rounded-full bg-aqua/15 blur-[100px]" />
+    <div>
+      {/* Opening: copy on the left, a real position to solve on the right */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 pt-12 sm:pt-16 pb-16 grid lg:grid-cols-[1.15fr_1fr] gap-x-16 gap-y-12 items-start">
+        <div>
+          <p className="eyebrow">Chess &middot; Rubik&apos;s Cube &middot; free to use</p>
+          <h1 className="font-display mt-5 text-[2.6rem] sm:text-6xl leading-[1.02] font-semibold">
+            A study room for chess players and cubers.
+          </h1>
+          <p className="mt-6 text-lg leading-relaxed max-w-xl">
+            {CHESS_LESSONS.length} chess lessons that run from the rules to rook endgames, and {CUBE_LESSONS.length} cube lessons that run from your first solve to full CFOP.
+            Stockfish and a two-phase cube solver run in your browser, so you can check any idea as you read.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/chess" className="btn btn-primary !px-4 !py-2.5">Start the chess course <ArrowRight size={16} aria-hidden /></Link>
+            <Link href="/cube" className="btn btn-ghost !px-4 !py-2.5">Start the cube course</Link>
+          </div>
+          <dl className="mt-12 grid grid-cols-2 sm:grid-cols-4 border-t border-ink">
+            {[[String(puzzles.length), "Lichess puzzles"], [String(OLL.length), "OLL cases"], [String(PLL.length), "PLL cases"], [String(videos.length), "video lessons"]].map(([n, l]) => (
+              <div key={l} className="pt-3 pb-1 pr-4">
+                <dt className="sr-only">{l}</dt>
+                <dd className="font-display text-3xl font-medium">{n}</dd>
+                <dd className="text-xs text-muted mt-0.5">{l}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
-        <div className="relative mx-auto max-w-7xl px-4 pt-14 pb-20 grid lg:grid-cols-2 gap-10 items-center">
-          <Reveal>
-            <span className="chip !text-aqua"><Zap size={12} /> Chess × Speedcubing learning platform</span>
-            <h1 className="font-[family-name:var(--font-display)] mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05]">
-              Master the board.<br /><span className="text-gradient">Solve the cube.</span>
-            </h1>
-            <p className="mt-5 text-lg text-muted max-w-xl">Structured beginner-to-advanced courses for chess and Rubik&apos;s Cube, powered by a real chess engine, a verified cube solver, and tools that run privately in your browser.</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/chess" className="btn btn-primary !px-5 !py-3"><Crown size={18} /> Start Chess Academy</Link>
-              <Link href="/cube" className="btn btn-ghost !px-5 !py-3"><Box size={18} /> Start Cube Academy</Link>
-            </div>
-            <dl className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {[[`${CHESS_LESSONS.length + CUBE_LESSONS.length}`, "lessons"], ["78", "OLL + PLL cases"], [`${puzzles.length}`, "real puzzles"], ["SF 19", "in-browser engine"]].map(([n, l]) => (
-                <div key={l} className="card p-3"><dt className="text-2xl font-bold text-gradient">{n}</dt><dd className="text-xs text-muted">{l}</dd></div>
-              ))}
-            </dl>
-          </Reveal>
-          <HeroVisual />
+        <div className="lg:pt-2 max-w-[440px] w-full lg:justify-self-end">
+          <MateBoard />
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-16">
-        <Reveal><h2 className="font-[family-name:var(--font-display)] text-3xl font-bold">Everything you need to improve</h2>
-          <p className="text-muted mt-2">Every tool below is functional — no mockups, no fake AI.</p></Reveal>
-        <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {features.map((f, i) => (
-            <Reveal key={f.title} delay={(i % 3) * 0.05}>
-              <Link href={f.href} className="card p-5 block h-full group hover:-translate-y-1 hover:border-electric/60 transition">
-                <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${f.color} grid place-items-center text-white`}><f.icon size={20} /></div>
-                <h3 className="mt-4 font-semibold">{f.title}</h3>
-                <p className="text-sm text-muted mt-1">{f.desc}</p>
-                <span className="mt-3 inline-flex items-center gap-1 text-sm text-electric opacity-0 group-hover:opacity-100 transition">Open <ArrowRight size={14} /></span>
+      {/* Two syllabi side by side, straight from the lesson data */}
+      <section className="border-t border-line">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16">
+          <h2 className="font-display text-3xl sm:text-4xl font-semibold max-w-2xl">Two courses, taught in order.</h2>
+          <p className="text-muted mt-3 max-w-2xl">Each lesson builds on the one before it. Mark lessons complete as you go and the dashboard keeps track.</p>
+          <div className="mt-10 grid md:grid-cols-2 gap-x-16 gap-y-12">
+            {([["chess", "Chess", CHESS_LESSONS], ["cube", "Rubik's Cube", CUBE_LESSONS]] as const).map(([k, label, ls]) => (
+              <div key={k}>
+                <div className="flex items-center gap-2 eyebrow mb-3"><span className={`h-2.5 w-2.5 ${k === "chess" ? "bg-chess" : "bg-cube"}`} aria-hidden />{label} &middot; {ls.length} lessons</div>
+                <ol className="border-t border-ink">
+                  {ls.map((l, i) => (
+                    <li key={l.slug} className="border-b border-line">
+                      <Link href={`/${k}/lessons/${l.slug}`} className="group grid grid-cols-[2rem_1fr_auto] gap-3 py-2.5 items-baseline">
+                        <span className="font-mono text-xs text-muted">{String(i + 1).padStart(2, "0")}</span>
+                        <span className="group-hover:underline underline-offset-4">{l.title}</span>
+                        <span className="text-xs text-muted">{l.level}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* The cube: the real 3D component and a real excerpt of the algorithm table */}
+      <section className="border-t border-line bg-surface">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 grid lg:grid-cols-[1fr_1.1fr] gap-x-16 gap-y-12">
+          <div>
+            <p className="eyebrow flex items-center gap-2"><span className="h-2.5 w-2.5 bg-cube" aria-hidden />Cube simulator</p>
+            <h2 className="font-display text-3xl sm:text-4xl font-semibold mt-3">Watch an algorithm do its work.</h2>
+            <p className="text-muted mt-3 mb-6 max-w-lg">This cube is set to the T-perm case: two corners and two edges on the top layer have swapped places. Press play and follow the moves underneath.</p>
+            <TPermCube />
+          </div>
+          <div>
+            <div className="flex items-baseline justify-between gap-4">
+              <h3 className="font-display text-2xl font-semibold">From the algorithm library</h3>
+              <Link href="/cube/algorithms" className="link text-sm whitespace-nowrap">All {OLL.length + PLL.length + F2L.length} cases</Link>
+            </div>
+            <p className="text-sm text-muted mt-2 mb-5">{OLL.length} OLL and {PLL.length} PLL cases, each verified on a virtual cube. Diagrams are drawn from the state each algorithm solves, viewed from above.</p>
+            <div className="overflow-x-auto">
+              <table className="table">
+                <thead><tr><th>Case</th><th className="hidden sm:table-cell">Diagram</th><th>Algorithm</th><th className="text-right">Odds</th></tr></thead>
+                <tbody>
+                  {excerpt.map((a) => (
+                    <tr key={a.id}>
+                      <td className="font-medium whitespace-nowrap">{a.name}</td>
+                      <td className="hidden sm:table-cell"><CaseDiagram alg={a.alg} mode="PLL" size={52} /></td>
+                      <td><Link href={`/cube/simulator?case=${a.id}`} className="font-mono text-[13px] hover:underline underline-offset-4">{a.alg}</Link></td>
+                      <td className="text-right font-mono text-xs text-muted">{a.probability}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Tools as a plain index */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 py-16 grid lg:grid-cols-[280px_1fr] gap-x-16 gap-y-6">
+        <div>
+          <h2 className="font-display text-3xl font-semibold">Practice tools</h2>
+          <p className="text-muted mt-3 text-sm">All of them work without an account. Your results are saved in this browser.</p>
+        </div>
+        <ul className="border-t border-ink">
+          {TOOLS.map(([href, name, desc]) => (
+            <li key={href} className="border-b border-line">
+              <Link href={href} className="group grid sm:grid-cols-[200px_1fr_auto] gap-x-6 gap-y-1 py-4 items-baseline">
+                <span className="font-medium group-hover:underline underline-offset-4">{name}</span>
+                <span className="text-sm text-muted">{desc}</span>
+                <ArrowRight size={15} className="hidden sm:block text-muted group-hover:text-fg self-center" aria-hidden />
               </Link>
-            </Reveal>
+            </li>
           ))}
+        </ul>
+      </section>
+
+      {/* Cameras: plain statement of what they do and don't do */}
+      <section className="border-t border-line">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16 grid lg:grid-cols-[280px_1fr_1fr] gap-x-16 gap-y-8">
+          <h2 className="font-display text-3xl font-semibold">About the camera tools</h2>
+          <div>
+            <h3 className="font-medium flex items-center gap-2"><span className="h-2.5 w-2.5 bg-cube" aria-hidden />Cube scanner</h3>
+            <p className="text-sm text-muted mt-2 leading-relaxed">Reads the colour of each sticker from your camera and groups them around the six centre colours. You check and correct every face, the app rejects cubes that can&apos;t exist, and then it solves the one you scanned.</p>
+            <Link href="/cube/scanner" className="link text-sm mt-3 inline-block">Open the cube scanner</Link>
+          </div>
+          <div>
+            <h3 className="font-medium flex items-center gap-2"><span className="h-2.5 w-2.5 bg-chess" aria-hidden />Board from a photo</h3>
+            <p className="text-sm text-muted mt-2 leading-relaxed">Does <em>not</em> recognise pieces automatically. You line up a grid on your photo and place the pieces yourself, then send the position to the analysis board. Images never leave your device.</p>
+            <Link href="/chess/scanner" className="link text-sm mt-3 inline-block">Open the board tool</Link>
+          </div>
         </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-10 grid lg:grid-cols-2 gap-6">
-        {[
-          { title: "Chess learning path", icon: Crown, href: "/chess", steps: ["Rules, piece values & special moves", "Opening principles & main openings", "Tactics motifs: forks, pins, skewers", "Middlegame plans & pawn structure", "Essential endgames: Lucena, Philidor"] },
-          { title: "Cube learning path", icon: Box, href: "/cube", steps: ["Notation & beginner layer-by-layer", "CFOP: cross & intuitive F2L", "2-look then full OLL / PLL", "Alternative methods: Roux, ZZ, Petrus", "Other puzzles: 2x2, Pyraminx, 4x4"] },
-        ].map((p) => (
-          <Reveal key={p.title}>
-            <div className="card p-6 h-full">
-              <div className="flex items-center gap-2 font-semibold text-lg"><p.icon size={20} className="text-aqua" /> {p.title}</div>
-              <ol className="mt-4 space-y-3">
-                {p.steps.map((s, i) => (
-                  <li key={s} className="flex items-center gap-3"><span className="h-7 w-7 shrink-0 rounded-full border border-line grid place-items-center text-xs font-bold text-electric">{i + 1}</span><span className="text-sm">{s}</span></li>
-                ))}
-              </ol>
-              <Link href={p.href} className="btn btn-ghost mt-6"><GraduationCap size={16} /> View curriculum</Link>
-            </div>
-          </Reveal>
-        ))}
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-16">
-        <Reveal>
-          <div className="card glow p-8 grid md:grid-cols-[auto_1fr] gap-6 items-center">
-            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-electric to-violet grid place-items-center text-white"><ShieldCheck size={28} /></div>
-            <div>
-              <h2 className="text-2xl font-bold">Honest AI, private by design</h2>
-              <p className="text-muted mt-2">The cube scanner measures real sticker colors from your camera and always lets you correct them before an impossible cube is rejected. The chessboard tool does <strong>not</strong> claim automatic piece recognition — you confirm the position in an editor overlaid on your photo. Camera frames and photos are processed on your device and never uploaded.</p>
-              <div className="mt-4 flex flex-wrap gap-2"><Link href="/privacy" className="btn btn-ghost">Privacy details</Link><Link href="/cube/scanner" className="btn btn-primary"><ScanLine size={16} /> Try the scanner</Link></div>
-            </div>
-          </div>
-        </Reveal>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 pb-6">
-        <Reveal>
-          <div className="rounded-3xl p-10 text-center bg-gradient-to-br from-electric/20 via-violet/20 to-aqua/20 border border-line">
-            <Trophy className="mx-auto text-aqua" size={36} />
-            <h2 className="mt-3 text-3xl font-bold">Ready for your first lesson?</h2>
-            <p className="text-muted mt-2">Your progress is saved automatically — in this browser as a guest, or to your account when sign-in is enabled.</p>
-            <div className="mt-6 flex justify-center gap-3 flex-wrap"><Link href="/dashboard" className="btn btn-primary">Open dashboard</Link><Link href="/quizzes" className="btn btn-ghost">Take a quiz</Link></div>
-          </div>
-        </Reveal>
       </section>
     </div>
   );

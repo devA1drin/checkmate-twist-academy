@@ -1,10 +1,17 @@
-export function PageHeader({ eyebrow, title, desc, children }: { eyebrow?: string; title: string; desc?: string; children?: React.ReactNode }) {
+/** Left-aligned editorial page header. The eyebrow gets a colour marker: purple for chess, cyan for cube. */
+export function PageHeader({ eyebrow, title, desc, children, section }: { eyebrow?: string; title: string; desc?: string; children?: React.ReactNode; section?: "chess" | "cube" | "none" }) {
+  const s = section ?? (eyebrow?.toLowerCase().includes("chess") ? "chess" : eyebrow?.toLowerCase().includes("cube") ? "cube" : "none");
   return (
-    <div className="mb-8">
-      {eyebrow && <div className="text-xs font-semibold uppercase tracking-[0.2em] text-aqua mb-2">{eyebrow}</div>}
-      <h1 className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl font-bold tracking-tight">{title}</h1>
-      {desc && <p className="text-muted mt-3 max-w-3xl">{desc}</p>}
+    <header className="mb-10 pb-6 border-b border-line">
+      {eyebrow && (
+        <div className="eyebrow flex items-center gap-2 mb-3">
+          {s !== "none" && <span aria-hidden className={`inline-block h-2.5 w-2.5 ${s === "chess" ? "bg-chess" : "bg-cube"}`} />}
+          {eyebrow}
+        </div>
+      )}
+      <h1 className="font-display text-4xl sm:text-5xl font-semibold leading-[1.05] max-w-4xl">{title}</h1>
+      {desc && <p className="text-muted mt-4 max-w-2xl text-[15px] leading-relaxed">{desc}</p>}
       {children}
-    </div>
+    </header>
   );
 }

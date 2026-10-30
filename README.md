@@ -97,6 +97,19 @@ The app is a standard Next.js app, and every page is static or client-rendered.
 
 The site must be served over HTTPS for camera access. Stockfish runs single-threaded, so no COOP/COEP headers are needed.
 
+Vercel notes:
+
+- Framework preset **Next.js**, default build command (`npm run build`), no `vercel.json` needed.
+- `prebuild` copies the Stockfish worker + `.wasm` and the cube-solver worker into `public/`. Those files are also committed, so they are served as plain static assets from `/stockfish/*` and `/workers/*`.
+- Without the two env vars the deployment runs in guest mode (progress in `localStorage`; accounts, leaderboards and community show a notice instead of fake data). `.env*` files are git-ignored except `.env.example`; there are no secrets in the repo.
+
+## Design
+
+- Type: Fraunces (display), IBM Plex Sans (text), IBM Plex Mono (moves, algorithms, labels), all self-hosted through `next/font`.
+- Colour: ink navy and warm paper neutrals. Blue is the only action colour; purple marks chess and cyan marks the cube. Flat fills, 1px rules, 4–8px radii, no gradients or shadows.
+- Tokens live in `src/app/globals.css` (`:root` for light, `.dark` for dark). Both themes pass WCAG AA for text.
+- Motion is limited to cube turns and a 200ms page fade, and both are switched off by `prefers-reduced-motion`.
+
 ## Honest limitations
 
 - **Chessboard photo recognition is not automatic.** The scanner aligns a grid on your photo and you place the pieces. No AI model is used, and none is claimed.

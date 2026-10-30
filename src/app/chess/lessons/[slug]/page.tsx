@@ -11,5 +11,5 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const { slug } = await params;
   const i = CHESS_LESSONS.findIndex((l) => l.slug === slug);
   if (i < 0) notFound();
-  return <LessonView lesson={CHESS_LESSONS[i]} kind="chess" prev={CHESS_LESSONS[i - 1]} next={CHESS_LESSONS[i + 1]} />;
+  return <LessonView lesson={CHESS_LESSONS[i]} kind="chess" prev={CHESS_LESSONS[i - 1]} next={CHESS_LESSONS[i + 1]} index={i} total={CHESS_LESSONS.length} />;
 }

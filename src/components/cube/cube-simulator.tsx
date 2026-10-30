@@ -1,7 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Play, Pause, SkipForward, SkipBack, RotateCcw, Shuffle, Wand2, Keyboard, CheckCircle2, Loader2 } from "lucide-react";
+import { Play, Pause, SkipForward, SkipBack, RotateCcw, Shuffle, Keyboard, CheckCircle2, Loader2 } from "lucide-react";
 import type { CubeHandle } from "./cube3d";
 import { applyAlg, applyMove, invertMoves, isSolved, normalizeToCenters, parseAlg, ParsedMove, randomMoveScramble, SOLVED } from "@/lib/cube/model";
 import { validateFacelets } from "@/lib/cube/validate";
@@ -148,18 +148,18 @@ export function CubeSimulator({ initialState = SOLVED, initialSequence, compact,
 
   return (
     <div className={`grid gap-6 ${compact ? "" : "lg:grid-cols-[1.4fr_1fr]"}`}>
-      <div className="card glow relative overflow-hidden bg-grid">
+      <div className="card relative overflow-hidden">
         <div className="absolute top-3 left-3 z-10 flex gap-2 flex-wrap">
-          {solved ? <span className="chip !text-emerald-400"><CheckCircle2 size={13} /> Solved</span> : <span className="chip">Scrambled</span>}
-          {solverState === "loading" && <span className="chip"><Loader2 size={12} className="animate-spin" /> Building solver tables…</span>}
+          {solved ? <span className="chip !text-ok !border-ok bg-surface"><CheckCircle2 size={12} /> Solved</span> : <span className="chip bg-surface">Scrambled</span>}
+          {solverState === "loading" && <span className="chip bg-surface"><Loader2 size={12} className="animate-spin" /> Building solver tables…</span>}
         </div>
         <Cube3D ref={cube} initialState={initialState} speed={speed} onMoveDone={onMoveDone} onIdle={onIdle} className={compact ? "h-[340px]" : "h-[380px] sm:h-[460px]"} />
         {seq && (
-          <div className="border-t border-line p-4 bg-surface/80 backdrop-blur">
-            <div className="text-xs text-muted mb-2">{seq.label} · step {pos}/{seq.moves.length}</div>
+          <div className="border-t border-line p-4 bg-surface">
+            <div className="text-xs text-muted mb-2 font-mono">{seq.label} · step {pos}/{seq.moves.length}</div>
             <div className="flex flex-wrap gap-1 mb-3 max-h-24 overflow-y-auto">
               {seq.moves.map((m, i) => (
-                <span key={i} className={`alg !text-xs ${i < pos ? "opacity-40" : ""} ${i === pos ? "!border-electric !text-electric" : ""}`}>{m.text}</span>
+                <span key={i} className={`font-mono text-[13px] px-1 ${i < pos ? "text-muted" : ""} ${i === pos ? "bg-cube text-bg" : ""}`}>{m.text}</span>
               ))}
             </div>
             <div className="flex flex-wrap gap-2">
@@ -175,13 +175,13 @@ export function CubeSimulator({ initialState = SOLVED, initialSequence, compact,
 
       <div className="space-y-4">
         <div className="card p-4">
-          <div className="flex items-center justify-between mb-3"><h3 className="font-semibold">Turn the cube</h3><span className="chip"><Keyboard size={12} /> keys U R F D L B M E S X Y Z · Shift = prime</span></div>
+          <div className="flex items-center justify-between mb-3"><h3 className="eyebrow">Turn the cube</h3><span className="text-xs text-muted inline-flex items-center gap-1.5"><Keyboard size={13} aria-hidden /> Keyboard: <kbd className="font-mono">U R F D L B M E S X Y Z</kbd>, Shift for prime</span></div>
           {MOVE_ROWS.map((row, ri) => (
             <div key={ri} className="grid grid-cols-6 gap-1.5 mb-1.5">
               {row.map((b) => (
                 <div key={b} className="grid grid-rows-3 gap-1">
                   {[b, b + "'", b + "2"].map((m) => (
-                    <button key={m} onClick={() => manual(m)} className="rounded-lg border border-line bg-surface-2 py-1 text-xs font-mono font-semibold hover:border-electric hover:text-electric">{m}</button>
+                    <button key={m} onClick={() => manual(m)} className="rounded-sm border border-line py-1 text-xs font-mono hover:border-fg hover:bg-surface-2">{m}</button>
                   ))}
                 </div>
               ))}
@@ -196,19 +196,19 @@ export function CubeSimulator({ initialState = SOLVED, initialSequence, compact,
         <div className="card p-4 space-y-3" onMouseEnter={warmSolver}>
           <div className="grid grid-cols-3 gap-2">
             <button className="btn btn-ghost" onClick={doScramble} disabled={busy || working}><Shuffle size={16} /> Scramble</button>
-            <button className="btn btn-primary" onClick={doSolve} disabled={busy || working}>{working ? <Loader2 size={16} className="animate-spin" /> : <Wand2 size={16} />} Solve</button>
+            <button className="btn btn-primary" onClick={doSolve} disabled={busy || working}>{working && <Loader2 size={16} className="animate-spin" />} Solve</button>
             <button className="btn btn-ghost" onClick={() => { setSeq(null); setScramble(null); hardReset(SOLVED); setMsg(null); }} disabled={working}><RotateCcw size={16} /> Reset</button>
           </div>
-          {scramble && <div className="text-xs"><span className="text-muted">Scramble: </span><span className="font-mono">{scramble}</span></div>}
+          {scramble && <div className="text-xs"><span className="eyebrow mr-2">Scramble</span><span className="font-mono">{scramble}</span></div>}
           <div className="flex gap-2">
             <input className="input font-mono" placeholder="Algorithm, e.g. R U R' U' R' F R2 U' R' U' R U R' F'" value={algText} onChange={(e) => setAlgText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && doApplyAlg()} aria-label="Algorithm" />
             <button className="btn btn-ghost" onClick={doApplyAlg} disabled={busy}>Apply</button>
           </div>
-          {msg && <p className={`text-xs ${msg.kind === "error" ? "text-red-400" : "text-muted"}`} role={msg.kind === "error" ? "alert" : undefined}>{msg.text}</p>}
+          {msg && <p className={`text-xs ${msg.kind === "error" ? "text-bad" : "text-muted"}`} role={msg.kind === "error" ? "alert" : undefined}>{msg.text}</p>}
         </div>
         {!compact && (
           <div className="card p-4">
-            <h3 className="font-semibold mb-2 text-sm">Cube net</h3>
+            <h3 className="eyebrow mb-3">Cube net</h3>
             <CubeNet state={state} />
           </div>
         )}

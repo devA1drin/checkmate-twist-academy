@@ -73,7 +73,7 @@ export function Community() {
         </form>
       ) : <div className="card p-4 text-sm"><Link href="/auth" className="text-electric hover:underline">Sign in</Link> to post and reply.</div>}
       <div className="flex gap-2">{["all", "general", "chess", "cube"].map((c) => <button key={c} onClick={() => setCat(c)} className={`btn ${cat === c ? "btn-primary" : "btn-ghost"} capitalize`}>{c}</button>)}</div>
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-bad">{error}</p>}
       {posts === null ? (error ? null : <p className="text-muted flex items-center gap-2"><Loader2 size={15} className="animate-spin" /> Loading…</p>) : posts.length === 0 ? <p className="text-muted text-center py-8">No posts yet. Start the first discussion!</p> : (
         <div className="space-y-3">
           {posts.map((p) => (
