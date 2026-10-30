@@ -6,7 +6,7 @@ const url = process.env.NEXT_PUBLIC_SUPABASE_URL, key = process.env.NEXT_PUBLIC_
 const mk = () => createClient(url, key, { auth: { persistSession: false } });
 const A = mk(), B = mk();
 let pass = 0, fail = 0;
-const ok = (c, m) => { console.log(c ? "PASS" : "FAIL", m); c ? pass++ : fail++; };
+const ok = (c, m) => { console.log(c ? "PASS" : "FAIL", m); if (c) pass++; else fail++; };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const sa = await A.auth.signInWithPassword({ email: process.env.E2E_A, password: process.env.E2E_PASS });
 const sb = await B.auth.signInWithPassword({ email: process.env.E2E_B, password: process.env.E2E_PASS });
