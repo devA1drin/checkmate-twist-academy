@@ -7,7 +7,6 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import { EMPTY_PROGRESS, ProgressData, Solve, QuizResult, PuzzleAttempt, EngineGame } from "./progress-types";
 import { useAuth } from "./auth-context";
 import { getSupabase } from "./supabase/client";
-import { unlocked } from "./achievements";
 
 const KEY = "cta-progress-v1";
 
@@ -93,13 +92,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     }
   }, [data, ready, mode]);
 
-  // sync achievements for account
-  useEffect(() => {
-    const sb = getSupabase();
-    if (!ready || !uid || !sb) return;
-    const ids = unlocked(data).map((a) => a.id);
-    if (ids.length) sb.from("user_achievements").upsert(ids.map((achievement_id) => ({ user_id: uid, achievement_id })), { onConflict: "user_id,achievement_id", ignoreDuplicates: true }).then(({ error }) => { if (error) setSyncError(error.message); });
-  }, [data, ready, uid]);
+  // Achievements for signed-in users are awarded by the database (see migration 0003), never by the client.
 
   const remote = useCallback(async (fn: (sb: NonNullable<ReturnType<typeof getSupabase>>, uid: string) => PromiseLike<{ error: { message: string } | null }>) => {
     const sb = getSupabase();
