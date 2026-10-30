@@ -24,13 +24,13 @@ export function TPermCube() {
   return (
     <div>
       <div className="h-[300px] sm:h-[360px] border border-line bg-surface">
-        <Cube3D ref={cube} initialState={start} speed={3} className="h-full w-full"
+        <Cube3D ref={cube} initialState={start} speed={3} className="h-full w-full" turnable={false}
           onMoveDone={() => setStep((s) => s + 1)} onIdle={() => setRunning(false)} />
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <button onClick={play} disabled={running} className="btn btn-primary !py-1.5">{step >= moves.length ? "Play again" : "Play T-perm"}</button>
         <button onClick={reset} className="btn btn-ghost !py-1.5">Reset</button>
-        <span className="text-xs text-muted ml-1">Drag to turn the view.</span>
+        <span className="text-xs text-muted ml-1">Drag to rotate the view.</span>
       </div>
       <p className="mt-3 font-mono text-sm leading-7" aria-label="T-perm algorithm">
         {moves.map((m, i) => (

@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:cube": "tsx scripts/test-model.ts && tsx scripts/test-validate.ts && tsx scripts/test-solver.ts && tsx scripts/test-classify.ts",
+    "test:cube": "tsx scripts/test-model.ts && tsx scripts/test-validate.ts && tsx scripts/test-solver.ts && tsx scripts/test-classify.ts && tsx scripts/test-nxn.ts",
     "test:db": "node scripts/test-schema.mjs",
     "verify:algs": "tsx scripts/verify-algs.ts",
     "verify:content": "tsx scripts/verify-content.ts",
