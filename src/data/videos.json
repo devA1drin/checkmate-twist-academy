@@ -1,5 +1,670 @@
 [
  {
+  "id": "mCsc24k-Q8M",
+  "title": "EASY CHESS ENDGAMES: King & Pawns",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "endgames"
+ },
+ {
+  "id": "YxoYYGHjveo",
+  "title": "Endgames for Club Players: Lucena & Philidor | ROOK ENDGAME | WIM Charlize Van Zyl | Forward Chess",
+  "channel": "Forward Chess",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "endgames"
+ },
+ {
+  "id": "yrdgbB_dhg0",
+  "title": "The Lucena & Philidor Positions - GM Yasser Seirawan - 2015.03.10",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "endgames"
+ },
+ {
+  "id": "8yu-Eml2W0E",
+  "title": "Rook Endings Explained | Philidor Position | Lucena Position | First-Rank Defence | Vancura Defence",
+  "channel": "Chess Shaastra",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "endgames"
+ },
+ {
+  "id": "RUYbO35XVCE",
+  "title": "Beginner To Master | Chess Speedrun | 1400 | Grandmaster Naroditsky",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "strategy"
+ },
+ {
+  "id": "NQe4MrOahgM",
+  "title": "Daniel Naroditsky Teaches GothamChess",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "strategy"
+ },
+ {
+  "id": "4x5Y62g4UhI",
+  "title": "Giuoco Piano | Italian Game Theory",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "italian"
+ },
+ {
+  "id": "enR0ntHVjG8",
+  "title": "Karpov and his Ruy Lopez | Mastering the Middlegame - GM Ben Finegold",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "ruy-lopez"
+ },
+ {
+  "id": "wAKWIie29YM",
+  "title": "Scotch Game | Ideas, Principles and Common Variations",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "scotch"
+ },
+ {
+  "id": "0iAyyKxh3zc",
+  "title": "DOMINATE as Black with the Sicilian Defense",
+  "channel": "ChessPage1",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "sicilian"
+ },
+ {
+  "id": "fhDxUI-t2v4",
+  "title": "Beginner To Master | Chess Speedrun | Najdorf Sicilian | Grandmaster Naroditsky",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "sicilian"
+ },
+ {
+  "id": "BPg1bSeJYNg",
+  "title": "The Najdorf (part 1) ⎸Sicilian Defense Theory",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "sicilian"
+ },
+ {
+  "id": "VGP0qWscORM",
+  "title": "The Alapin (c3) ⎸Sicilian Defense Theory",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "sicilian"
+ },
+ {
+  "id": "VxV8l3x7hOg",
+  "title": "CRUSH the Sicilian Defense: The ALAPIN",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "sicilian"
+ },
+ {
+  "id": "5pec-u6PSvA",
+  "title": "Learn the French Defense | 10-Minute Chess Openings",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "french"
+ },
+ {
+  "id": "pig559oP5OM",
+  "title": "Introduction to the French Defense ⎸Chess Openings",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "french"
+ },
+ {
+  "id": "0p_881Nwoo4",
+  "title": "Learn the Caro-Kann in 8 Minutes",
+  "channel": "ChessPage1",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "caro-kann"
+ },
+ {
+  "id": "Z5QLUtjiGFg",
+  "title": "Power of Qb6 In Caro Kann!! | The Sensei Speedrun | GM Naroditsky",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "caro-kann"
+ },
+ {
+  "id": "ebfzL_GwiIE",
+  "title": "How to CRUSH with the Caro-Kann!",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "caro-kann"
+ },
+ {
+  "id": "lwPRqMI5YZI",
+  "title": "How to Play The Queen's Gambit",
+  "channel": "ChessPage1",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "queens-gambit"
+ },
+ {
+  "id": "5FZ0rU4bd_w",
+  "title": "Vienna Variation of the Queen’s Gambit Declined",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "queens-gambit"
+ },
+ {
+  "id": "DlXXfcXcF5o",
+  "title": "Introduction to the Queen's Gambit Accepted",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "queens-gambit"
+ },
+ {
+  "id": "dksvHyyI_Vo",
+  "title": "London System: One Opening against anything",
+  "channel": "ChessPage1",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "london"
+ },
+ {
+  "id": "ECMMct_jnEM",
+  "title": "How to WIN with the London System!",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "london"
+ },
+ {
+  "id": "RzfG5SfKRak",
+  "title": "London System Unveiled | A Comprehensive Analysis | GM Naroditsky’s Theory Speed Run",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "london"
+ },
+ {
+  "id": "kK0cq6UBt1Y",
+  "title": "Learn the King's Indian Setup | 10-Minute Chess Openings",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "kings-indian"
+ },
+ {
+  "id": "0DY4Z_L866c",
+  "title": "Complete King's Indian repertoire for Black",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "kings-indian"
+ },
+ {
+  "id": "kQHOIgVhyow",
+  "title": "Mastering Transitions in The King’s Indian Opening | A GM Naroditsky Theory Speed Run",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "kings-indian"
+ },
+ {
+  "id": "jk9Qv7-HCSU",
+  "title": "Complete Nimzo-Indian Repertoire for Black",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "nimzo-indian"
+ },
+ {
+  "id": "pBpEFAz5Afw",
+  "title": "WIN GAMES with the Nimzo-Indian Defense!",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "nimzo-indian"
+ },
+ {
+  "id": "3SzZnyyWpIA",
+  "title": "The Nimzo-Indian Defence, Classical Variation - Chess Openings Explained",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "nimzo-indian"
+ },
+ {
+  "id": "S2EwNxgXcfg",
+  "title": "Complete English Opening Repertoire",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "english"
+ },
+ {
+  "id": "va0s92praEM",
+  "title": "How to play the English Opening | 10-Minute Chess Openings",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "english"
+ },
+ {
+  "id": "9RXEvHZmbZU",
+  "title": "Introduction to the Slav Defense",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "slav"
+ },
+ {
+  "id": "cs54KXnGc-0",
+  "title": "Learn the Slav Defense | 10-Minute Chess Openings",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "slav"
+ },
+ {
+  "id": "Up9c5bbMJvE",
+  "title": "CRUSH People with the Scandinavian Defense!",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "scandinavian"
+ },
+ {
+  "id": "Wpd8jcVKcJw",
+  "title": "Scandinavian Defense | Ideas, Principles and Common Variations",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "scandinavian"
+ },
+ {
+  "id": "r7WNog6y-UU",
+  "title": "The ONLY Chess Guide you need (1 hour+)",
+  "channel": "ChessPage1",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "fundamentals"
+ },
+ {
+  "id": "OCSbzArwB10",
+  "title": "How To Play Chess: The Ultimate Beginner Guide",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "fundamentals"
+ },
+ {
+  "id": "ej_fnsdsksA",
+  "title": "How To Play Chess: Learn All The Rules Of The Royal Game",
+  "channel": "Chess.com",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "fundamentals"
+ },
+ {
+  "id": "pOjzvVVrxWw",
+  "title": "What to do in a chess opening? - Beginner to Chess Master #5",
+  "channel": "ChessNetwork",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "fundamentals"
+ },
+ {
+  "id": "emZGqqemsq8",
+  "title": "LEARN TO ATTACK WITH HIKARU NAKAMURA!!",
+  "channel": "GMHikaru",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "fundamentals"
+ },
+ {
+  "id": "2moItZHi3VA",
+  "title": "So You Wanna Get Good At Endgames",
+  "channel": "GMHikaru",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "endgames"
+ },
+ {
+  "id": "3SLCXsrZ_mw",
+  "title": "Magnus Carlsen: “This is the MOST INTERESTING GAME I’ve Ever Played in Titled Tuesday”",
+  "channel": "Magnus Carlsen",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "model-games"
+ },
+ {
+  "id": "MRNZE990cgc",
+  "title": "FREE CHESS STRATEGY LESSON from World Champion Magnus Carlsen!",
+  "channel": "Magnus Carlsen",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "model-games"
+ },
+ {
+  "id": "7l9ftC8CyoE",
+  "title": "Can Magnus Carlsen Solve Impossible BBC Puzzles?",
+  "channel": "Take Take Take",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "tactics"
+ },
+ {
+  "id": "QUqq7wSLE78",
+  "title": "Introduction to Pawn Endgames | Principles of Chess Endgames | GM Naroditsky",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "endgames"
+ },
+ {
+  "id": "7EYY0JCuAlY",
+  "title": "Rook Endgames - GM Josh Friedel",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "endgames"
+ },
+ {
+  "id": "xh4sO1ICS_Q",
+  "title": "Beginners' Openings and Tactics - GM Varuzhan Akobian - 2013.01.13",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "tactics"
+ },
+ {
+  "id": "1EV8XLSZsho",
+  "title": "Mastering Chess Tactics | Advanced Puzzles Explored with Daniel Naroditsky",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "tactics"
+ },
+ {
+  "id": "sVWwCGrPDDM",
+  "title": "Understanding Pawn Structures: Introduction and Basics of Positional Play (Part 1/30)",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "strategy"
+ },
+ {
+  "id": "7-5-3_XD4b8",
+  "title": "A positional chess game - Improve Your Chess Rating #4",
+  "channel": "ChessNetwork",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "strategy"
+ },
+ {
+  "id": "hpq5_jr5IQg",
+  "title": "Chess Endgame: How to Checkmate with a Rook",
+  "channel": "ChessNetwork",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "endgames"
+ },
+ {
+  "id": "iBZLU1FXhcI",
+  "title": "6 Checkmate Patterns YOU MUST KNOW",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "tactics"
+ },
+ {
+  "id": "W1gWHIpQNVU",
+  "title": "All The Chess Tactics You NEED To Know",
+  "channel": "Chess.com",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "tactics"
+ },
+ {
+  "id": "x6rWHMDhHmw",
+  "title": "Ivanchuk vs. Yusupov, Brussels '91 | Games to Know by Heart - GM Yasser Seirawan",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "model-games"
+ },
+ {
+  "id": "FpYf1Wrzi2M",
+  "title": "Kasparov's Greatest Chess Game!!! | GM Naro Analyzes Famous Games",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "model-games"
+ },
+ {
+  "id": "Q4_OTquKti0",
+  "title": "Sicilian Dragon (part 1), Yugoslav Attack | Sicilian Defense Theory",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "sicilian"
+ },
+ {
+  "id": "rd1eKLJ3DGQ",
+  "title": "The Accelerated Dragon ⎸Sicilian Defense Theory",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "sicilian"
+ },
+ {
+  "id": "mtsabsZ4wG4",
+  "title": "How To Play The Queen's Gambit",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "queens-gambit"
+ },
+ {
+  "id": "4azymOvz0xE",
+  "title": "Learn the London with Hikaru",
+  "channel": "GMHikaru",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "london"
+ },
+ {
+  "id": "F0yqb9VMhJU",
+  "title": "Learn the King's Indian Defense with Hikaru",
+  "channel": "GMHikaru",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "kings-indian"
+ },
+ {
+  "id": "iGCSfVDYhh0",
+  "title": "A King's Indian Defense Lesson from Hikaru",
+  "channel": "GMHikaru",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "kings-indian"
+ },
+ {
+  "id": "-DgZaPXuHiQ",
+  "title": "Hikaru Teaches the Caro-Kann",
+  "channel": "GMHikaru",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "caro-kann"
+ },
+ {
+  "id": "8tngxtfY2m4",
+  "title": "Hikaru Teaches Accelerated Dragon to Beginners",
+  "channel": "GMHikaru",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "sicilian"
+ },
+ {
+  "id": "mu5eMIsaihU",
+  "title": "Magnus Carlsen Plays LONDON SYSTEM OPENING Against GRANDMASTER Minh Le",
+  "channel": "Magnus Carlsen",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "model-games",
+  "kit": "london"
+ },
+ {
+  "id": "ikfiI4TnLmM",
+  "title": "Magnus Carlsen SACRIFICES His QUEEN to WIN THE ENDGAME in Titled Tuesday",
+  "channel": "Magnus Carlsen",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "endgames"
+ },
+ {
+  "id": "FNEWS7Ny73w",
+  "title": "Can Magnus Remember a Position In JUST 2 Seconds?",
+  "channel": "Take Take Take",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "tactics"
+ },
+ {
+  "id": "csJKauwbYFk",
+  "title": "Magnus Carlsen's favorite Opening: Ruy Lopez",
+  "channel": "ChessPage1",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "ruy-lopez"
+ },
+ {
+  "id": "Ra7rMXzUCOI",
+  "title": "Fried Liver Attack | works best under 1000 Elo",
+  "channel": "ChessPage1",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "tactics",
+  "kit": "italian"
+ },
+ {
+  "id": "oRUdKv6emyM",
+  "title": "Mikhail Tal's French Defense Wins in 26 Moves",
+  "channel": "ChessNetwork",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "model-games",
+  "kit": "french"
+ },
+ {
+  "id": "QkbJGNvOaj0",
+  "title": "13-Year-Old Kasparov's London System Wins in 23 Moves",
+  "channel": "ChessNetwork",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "model-games",
+  "kit": "london"
+ },
+ {
+  "id": "vS_yagozyy4",
+  "title": "Caro-Kann: Advance Variation - GM Ben Finegold",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "caro-kann"
+ },
+ {
+  "id": "K13ARmpM-uo",
+  "title": "Slav Defense, Exchange Variation | Kids' Class - GM Varuzhan Akobian",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "slav"
+ },
+ {
+  "id": "_SE4lLEo2Rs",
+  "title": "The English Opening - Chess Openings Explained",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "english"
+ },
+ {
+  "id": "Ghs5zNkv4SU",
+  "title": "Play the Queen's Gambit Declined like Kasparov - GM Varuzhan Akobian",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "queens-gambit"
+ },
+ {
+  "id": "v-_HCcRkXg4",
+  "title": "Queen's Gambit Declined, Exchange | Carlsbad Structure - Chess Openings Explained",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "strategy",
+  "kit": "queens-gambit"
+ },
+ {
   "id": "7Ron6MN45LY",
   "title": "Learn How to Solve a Rubik's Cube in 10 Minutes (Beginner Tutorial)",
   "channel": "J Perm",
@@ -70,61 +735,5 @@
   "category": "cube",
   "level": "Intermediate",
   "topic": "zz"
- },
- {
-  "id": "OCSbzArwB10",
-  "title": "How To Play Chess: The Ultimate Beginner Guide",
-  "channel": "GothamChess",
-  "category": "chess",
-  "level": "Beginner",
-  "topic": "rules-and-pieces"
- },
- {
-  "id": "mCsc24k-Q8M",
-  "title": "EASY CHESS ENDGAMES: King & Pawns",
-  "channel": "GothamChess",
-  "category": "chess",
-  "level": "Beginner",
-  "topic": "king-and-pawn"
- },
- {
-  "id": "YxoYYGHjveo",
-  "title": "Endgames for Club Players: Lucena & Philidor | ROOK ENDGAME | WIM Charlize Van Zyl | Forward Chess",
-  "channel": "Forward Chess",
-  "category": "chess",
-  "level": "Intermediate",
-  "topic": "rook-endgames"
- },
- {
-  "id": "yrdgbB_dhg0",
-  "title": "The Lucena & Philidor Positions - GM Yasser Seirawan - 2015.03.10",
-  "channel": "Saint Louis Chess Club",
-  "category": "chess",
-  "level": "Intermediate",
-  "topic": "rook-endgames"
- },
- {
-  "id": "8yu-Eml2W0E",
-  "title": "Rook Endings Explained | Philidor Position | Lucena Position | First-Rank Defence | Vancura Defence",
-  "channel": "Chess Shaastra",
-  "category": "chess",
-  "level": "Advanced",
-  "topic": "rook-endgames"
- },
- {
-  "id": "RUYbO35XVCE",
-  "title": "Beginner To Master | Chess Speedrun | 1400 | Grandmaster Naroditsky",
-  "channel": "Daniel Naroditsky",
-  "category": "chess",
-  "level": "Intermediate",
-  "topic": "middlegame-plans"
- },
- {
-  "id": "NQe4MrOahgM",
-  "title": "Daniel Naroditsky Teaches GothamChess",
-  "channel": "GothamChess",
-  "category": "chess",
-  "level": "Intermediate",
-  "topic": "middlegame-plans"
  }
 ]

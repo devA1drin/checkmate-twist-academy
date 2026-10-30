@@ -15,7 +15,8 @@
     "verify:content": "tsx scripts/verify-content.ts",
     "verify:videos": "node scripts/verify-videos.mjs",
     "curate:puzzles": "node scripts/curate-puzzles.mjs",
-    "verify": "npm run test:cube && npm run verify:algs && npm run verify:content && npm run test:db"
+    "verify": "npm run test:cube && npm run verify:algs && npm run verify:content && npm run verify:openings && npm run test:db",
+    "verify:openings": "tsx scripts/verify-openings.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",
