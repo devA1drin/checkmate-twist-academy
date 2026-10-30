@@ -1,0 +1,130 @@
+[
+ {
+  "id": "7Ron6MN45LY",
+  "title": "Learn How to Solve a Rubik's Cube in 10 Minutes (Beginner Tutorial)",
+  "channel": "J Perm",
+  "category": "cube",
+  "level": "Beginner",
+  "topic": "beginner-method"
+ },
+ {
+  "id": "GANnG5a19kg",
+  "title": "Learn How to Solve a 2x2 Rubik's Cube (Beginner Tutorial)",
+  "channel": "J Perm",
+  "category": "cube",
+  "level": "Beginner",
+  "topic": "other-puzzles"
+ },
+ {
+  "id": "sCJcd6FKWAc",
+  "title": "How to Solve a Pyraminx (EASY Beginner Tutorial)",
+  "channel": "ParadoxCubing",
+  "category": "cube",
+  "level": "Beginner",
+  "topic": "other-puzzles"
+ },
+ {
+  "id": "6PSBaxlBqRg",
+  "title": "2 Look OLL | Beginner CFOP",
+  "channel": "CubeHead",
+  "category": "cube",
+  "level": "Intermediate",
+  "topic": "oll"
+ },
+ {
+  "id": "f_Yor-ydZjs",
+  "title": "Rubik's Cube: Easy 2-Look PLL Tutorial (Beginner CFOP)",
+  "channel": "J Perm",
+  "category": "cube",
+  "level": "Intermediate",
+  "topic": "pll"
+ },
+ {
+  "id": "Ar_Zit1VLG0",
+  "title": "Learn F2L in 6 minutes (Full Intuitive F2L Tutorial)",
+  "channel": "J Perm",
+  "category": "cube",
+  "level": "Intermediate",
+  "topic": "f2l"
+ },
+ {
+  "id": "3B_oB2YrLvk",
+  "title": "Advanced F2L Tutorial (CFOP)",
+  "channel": "J Perm",
+  "category": "cube",
+  "level": "Advanced",
+  "topic": "f2l"
+ },
+ {
+  "id": "ilkF7cxQV2o",
+  "title": "Complete Beginner Roux Tutorial",
+  "channel": "SpeedCubeReview",
+  "category": "cube",
+  "level": "Intermediate",
+  "topic": "roux"
+ },
+ {
+  "id": "Q9f-uHyHeQs",
+  "title": "ZZ Method Tutorial Part 1: Introduction",
+  "channel": "PhilYu",
+  "category": "cube",
+  "level": "Intermediate",
+  "topic": "zz"
+ },
+ {
+  "id": "OCSbzArwB10",
+  "title": "How To Play Chess: The Ultimate Beginner Guide",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "rules-and-pieces"
+ },
+ {
+  "id": "mCsc24k-Q8M",
+  "title": "EASY CHESS ENDGAMES: King & Pawns",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "king-and-pawn"
+ },
+ {
+  "id": "YxoYYGHjveo",
+  "title": "Endgames for Club Players: Lucena & Philidor | ROOK ENDGAME | WIM Charlize Van Zyl | Forward Chess",
+  "channel": "Forward Chess",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "rook-endgames"
+ },
+ {
+  "id": "yrdgbB_dhg0",
+  "title": "The Lucena & Philidor Positions - GM Yasser Seirawan - 2015.03.10",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "rook-endgames"
+ },
+ {
+  "id": "8yu-Eml2W0E",
+  "title": "Rook Endings Explained | Philidor Position | Lucena Position | First-Rank Defence | Vancura Defence",
+  "channel": "Chess Shaastra",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "rook-endgames"
+ },
+ {
+  "id": "RUYbO35XVCE",
+  "title": "Beginner To Master | Chess Speedrun | 1400 | Grandmaster Naroditsky",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "middlegame-plans"
+ },
+ {
+  "id": "NQe4MrOahgM",
+  "title": "Daniel Naroditsky Teaches GothamChess",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "middlegame-plans"
+ }
+]
