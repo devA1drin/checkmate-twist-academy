@@ -2,7 +2,7 @@
 import { Chess } from "chess.js";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, RotateCcw, Cpu, Swords, Hand } from "lucide-react";
+import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 import { Board, tryMove } from "@/components/chess/board";
 import type { BoardBlock } from "@/data/lesson-types";
 
@@ -31,18 +31,18 @@ export function LessonBoard({ block, id }: { block: BoardBlock; id: string }) {
   };
 
   return (
-    <figure className="card p-3 sm:p-4">
+    <figure className="border-y border-line py-5">
       <div className="grid gap-4 md:grid-cols-[minmax(0,340px)_1fr] items-start">
         <Board id={id} fen={fen} orientation={block.orientation} onMove={onMove} lastMove={explore ? explore.last : line.last[ply]} />
         <div className="space-y-3 text-sm">
-          <figcaption className="text-muted">{block.caption}</figcaption>
+          <figcaption className="text-[15px] leading-relaxed">{block.caption}</figcaption>
           {line.sans.length > 0 && (
             <div className="flex flex-wrap gap-1 font-mono text-xs">
               {line.sans.map((s, i) => {
                 const idx = i + (blackFirst ? 1 : 0);
                 const num = startNo + Math.floor(idx / 2);
                 const label = idx % 2 === 0 ? `${num}.${s}` : i === 0 ? `${num}...${s}` : s;
-                return <button key={i} onClick={() => { setExplore(null); setPly(i + 1); }} className={`rounded px-1.5 py-0.5 ${!explore && ply === i + 1 ? "bg-electric text-white" : "hover:bg-surface-2"}`}>{label}</button>;
+                return <button key={i} onClick={() => { setExplore(null); setPly(i + 1); }} className={`rounded-sm px-1.5 py-0.5 ${!explore && ply === i + 1 ? "bg-fg text-bg" : "hover:bg-surface-2"}`}>{label}</button>;
               })}
             </div>
           )}
@@ -52,10 +52,10 @@ export function LessonBoard({ block, id }: { block: BoardBlock; id: string }) {
               <button className="btn btn-ghost !px-2" aria-label="Next move" onClick={() => { setExplore(null); setPly(Math.min(line.sans.length, ply + 1)); }}><ChevronRight size={16} /></button>
             </>}
             <button className="btn btn-ghost !px-2" aria-label="Reset" onClick={() => { setExplore(null); setPly(0); }}><RotateCcw size={16} /></button>
-            <Link className="btn btn-ghost" href={`/chess/analysis?fen=${encodeURIComponent(fen)}`}><Cpu size={15} /> Analyse</Link>
-            {block.practice && <Link className="btn btn-primary" href={`/chess/play?fen=${encodeURIComponent(start)}&level=${block.practice.level}`}><Swords size={15} /> {block.practice.label}</Link>}
+            <Link className="btn btn-ghost" href={`/chess/analysis?fen=${encodeURIComponent(fen)}`}>Analyse</Link>
+            {block.practice && <Link className="btn btn-primary" href={`/chess/play?fen=${encodeURIComponent(start)}&level=${block.practice.level}`}>{block.practice.label}</Link>}
           </div>
-          <p className="text-xs text-muted flex items-center gap-1.5"><Hand size={13} /> {explore ? "Exploring your own moves — press reset to return to the lesson line." : "Drag or tap pieces to explore. Playing the lesson move advances the line."}</p>
+          <p className="text-xs text-muted">{explore ? "You are off the lesson line. Reset to go back to it." : "Move the pieces to try your own ideas. Playing the lesson move steps the line forward."}</p>
         </div>
       </div>
     </figure>

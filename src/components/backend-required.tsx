@@ -1,13 +1,12 @@
 import Link from "next/link";
-import { Database } from "lucide-react";
 /** Shown in local guest mode for features that need the Supabase backend. Never shows sample data. */
 export function BackendRequired({ feature }: { feature: string }) {
   return (
-    <div className="card p-8 text-center max-w-2xl mx-auto">
-      <Database className="mx-auto text-aqua" size={36} />
-      <h2 className="text-xl font-semibold mt-3">{feature}: online backend required</h2>
-      <p className="text-muted mt-2 text-sm">This copy of Checkmate &amp; Twist Academy is running in <strong>local guest mode</strong> (no Supabase project configured), so there are no other users to show. We don&apos;t display made-up players or sample data. To enable it, set <code className="alg">NEXT_PUBLIC_SUPABASE_URL</code> and <code className="alg">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> and run the SQL migration — see the README.</p>
-      <Link href="/dashboard" className="btn btn-ghost mt-4">Go to your local dashboard</Link>
+    <div className="max-w-2xl border-l-2 border-ink pl-5 py-1">
+      <h2 className="font-display text-2xl font-semibold">{feature} {feature.endsWith("s") ? "are" : "is"} not switched on here</h2>
+      <p className="mt-3 leading-relaxed">This copy of the site runs in guest mode, without a database, so there are no other people to show. We won&apos;t fill the page with made-up names or sample numbers instead.</p>
+      <p className="mt-3 text-sm text-muted leading-relaxed">Site owners: set <code className="alg">NEXT_PUBLIC_SUPABASE_URL</code> and <code className="alg">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> and run the SQL migration. The README has the steps.</p>
+      <Link href="/dashboard" className="link text-sm mt-4 inline-block">See your own progress on the dashboard</Link>
     </div>
   );
 }

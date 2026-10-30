@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Camera, CheckCircle2, AlertTriangle, RotateCcw, Wand2, Pencil, ScanLine, Loader2, Info } from "lucide-react";
+import { Camera, CheckCircle2, RotateCcw, Loader2 } from "lucide-react";
 import { useCamera, cameraUnavailableReason } from "@/lib/camera/use-camera";
 import { PrivacyNote } from "@/components/privacy-note";
 import { CubeNet } from "@/components/cube/cube-net";
@@ -123,9 +123,8 @@ export function CubeScanner() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-electric/30 bg-electric/5 p-3 text-sm flex gap-2.5">
-        <Info size={18} className="text-electric shrink-0 mt-0.5" />
-        <div>Detection is real but simple: it averages the pixels inside each grid cell and groups them by your cube&apos;s six center colors. Glare, dim light, and similar red/orange stickers can fool it, so <strong>always review the result</strong> — low-confidence stickers are outlined, and impossible cubes are rejected before solving. Assumes the standard color scheme (white opposite yellow, green opposite blue, red opposite orange).</div>
+      <div className="max-w-3xl border-l-2 border-ink pl-4 text-sm leading-relaxed">
+        <div><strong className="font-medium">How detection works.</strong> It is deliberately simple: it averages the pixels inside each grid cell and groups them by your cube&apos;s six center colors. Glare, dim light, and similar red/orange stickers can fool it, so <strong>always review the result</strong> — low-confidence stickers are outlined, and impossible cubes are rejected before solving. Assumes the standard color scheme (white opposite yellow, green opposite blue, red opposite orange).</div>
       </div>
 
       {step <= 5 && (
@@ -147,29 +146,29 @@ export function CubeScanner() {
               )}
               {cam.state !== "live" && (
                 <div className="absolute inset-0 grid place-items-center p-6 text-center text-sm text-muted">
-                  {cam.state === "starting" ? <span className="flex items-center gap-2"><Loader2 className="animate-spin" size={16} /> Waiting for camera permission…</span> : <div><ScanLine className="mx-auto mb-2 text-aqua" /> Start the camera to scan, or enter colors manually.</div>}
+                  {cam.state === "starting" ? <span className="flex items-center gap-2"><Loader2 className="animate-spin" size={16} /> Waiting for camera permission…</span> : <div>Start the camera to scan, or enter the colours by hand.</div>}
                 </div>
               )}
             </div>
-            {reason && <div className="rounded-lg border border-amber-400/40 bg-amber-400/10 p-3 text-sm flex gap-2"><AlertTriangle size={16} className="text-amber-400 shrink-0 mt-0.5" />{reason}</div>}
-            {cam.error && <div className="rounded-lg border border-red-400/40 bg-red-400/10 p-3 text-sm flex gap-2"><AlertTriangle size={16} className="text-red-400 shrink-0 mt-0.5" />{cam.error}</div>}
+            {reason && <p className="border-l-2 border-warn pl-3 text-sm">{reason}</p>}
+            {cam.error && <p className="border-l-2 border-bad pl-3 text-sm text-bad">{cam.error}</p>}
             <div className="flex flex-wrap gap-2">
               {cam.state !== "live" ? <button className="btn btn-primary" disabled={!!reason || cam.state === "starting"} onClick={cam.start}><Camera size={15} /> {cam.state === "error" ? "Try camera again" : "Start camera"}</button>
-                : <><button className="btn btn-primary" onClick={capture}><ScanLine size={15} /> Capture {COLOR_NAMES[face]} face ({step + 1}/6)</button><button className="btn btn-ghost" onClick={cam.stop}>Stop camera</button></>}
+                : <><button className="btn btn-primary" onClick={capture}>Capture {COLOR_NAMES[face]} face ({step + 1}/6)</button><button className="btn btn-ghost" onClick={cam.stop}>Stop camera</button></>}
               {step > 0 && <button className="btn btn-ghost" onClick={() => setStep(step - 1)}>Re-scan previous face</button>}
-              <button className="btn btn-ghost" onClick={startManual}><Pencil size={15} /> Enter colors manually</button>
+              <button className="btn btn-ghost" onClick={startManual}>Enter colours by hand</button>
             </div>
           </div>
           <div className="space-y-4">
             <div className="card p-4">
-              <div className="text-xs text-muted uppercase tracking-wider">Face {step + 1} of 6</div>
-              <div className="mt-1 font-semibold flex items-center gap-2"><span className="h-4 w-4 rounded" style={{ background: STICKER_COLORS_2D[face] }} /> {COLOR_NAMES[face]} center</div>
+              <div className="eyebrow">Face {step + 1} of 6</div>
+              <div className="mt-1 font-semibold flex items-center gap-2"><span className="h-4 w-4 rounded-sm border border-line" style={{ background: STICKER_COLORS_2D[face] }} /> {COLOR_NAMES[face]} center</div>
               <p className="text-sm text-muted mt-2">{GUIDE[face]}</p>
               <p className="text-xs text-muted mt-2">Fill the cyan square with the face, keep it flat to the camera and avoid glare. The dots show what the camera currently sees.</p>
-              {live[4] && live[4] !== face && cam.state === "live" && <p className="text-xs text-amber-400 mt-2">The center looks {COLOR_NAMES[live[4]].toLowerCase()} — expected {COLOR_NAMES[face].toLowerCase()}. Check which face you are showing.</p>}
+              {live[4] && live[4] !== face && cam.state === "live" && <p className="text-xs text-warn mt-2">The center looks {COLOR_NAMES[live[4]].toLowerCase()} — expected {COLOR_NAMES[face].toLowerCase()}. Check which face you are showing.</p>}
             </div>
             <div className="card p-4 flex gap-2 justify-center">
-              {FACES.split("").map((f, i) => <div key={f} className={`h-9 w-9 rounded-lg grid place-items-center text-xs font-bold border-2 ${i === step ? "border-aqua" : "border-transparent"}`} style={{ background: STICKER_COLORS_2D[f], color: f === "U" || f === "D" ? "#000" : "#fff", opacity: samples[i] ? 1 : 0.35 }}>{samples[i] ? <CheckCircle2 size={16} /> : i + 1}</div>)}
+              {FACES.split("").map((f, i) => <div key={f} className={`h-9 w-9 rounded-sm grid place-items-center text-xs font-bold border ${i === step ? "outline-2 outline-offset-2 outline-fg outline border-line" : "border-line"}`} style={{ background: STICKER_COLORS_2D[f], color: f === "U" || f === "D" ? "#000" : "#fff", opacity: samples[i] ? 1 : 0.35 }}>{samples[i] ? <CheckCircle2 size={16} /> : i + 1}</div>)}
             </div>
           </div>
         </div>
@@ -178,19 +177,19 @@ export function CubeScanner() {
       {step === 6 && tokens && !result && (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
           <div className="card p-4">
-            <div className="font-semibold mb-1">{mode === "manual" ? "Paint each sticker" : "Review and correct"}</div>
-            <p className="text-sm text-muted mb-3">Pick a color, then click stickers to fix them. Layout: white face on top, green in front. {lowConf.length > 0 && <span className="text-amber-400">{lowConf.length} low-confidence stickers are outlined in cyan.</span>}</p>
+            <div className="font-display text-xl font-semibold mb-1">{mode === "manual" ? "Paint each sticker" : "Review and correct"}</div>
+            <p className="text-sm text-muted mb-3">Pick a color, then click stickers to fix them. Layout: white face on top, green in front. {lowConf.length > 0 && <span className="text-warn">{lowConf.length} low-confidence stickers are outlined in cyan.</span>}</p>
             <div className="flex justify-center"><CubeNet state={tokens.join("")} size={30} onSticker={paint} highlight={lowConf} /></div>
           </div>
           <div className="space-y-4">
             <div className="card p-4">
-              <div className="text-sm font-semibold mb-2">Color</div>
-              <div className="grid grid-cols-6 gap-2">{FACES.split("").map((f) => <button key={f} onClick={() => setBrush(f)} aria-label={COLOR_NAMES[f]} title={COLOR_NAMES[f]} className={`aspect-square rounded-lg border-2 ${brush === f ? "border-aqua scale-110" : "border-line"} transition`} style={{ background: STICKER_COLORS_2D[f] }} />)}</div>
+              <div className="eyebrow mb-2">Colour</div>
+              <div className="grid grid-cols-6 gap-2">{FACES.split("").map((f) => <button key={f} onClick={() => setBrush(f)} aria-label={COLOR_NAMES[f]} title={COLOR_NAMES[f]} className={`aspect-square rounded-sm border ${brush === f ? "outline-2 outline-offset-2 outline-fg outline border-line" : "border-line"}`} style={{ background: STICKER_COLORS_2D[f] }} />)}</div>
             </div>
             <div className="card p-4 space-y-3">
-              <button className="btn btn-primary w-full" onClick={validateAndSolve} disabled={solving}>{solving ? <><Loader2 size={15} className="animate-spin" /> Solving…</> : <><Wand2 size={15} /> Validate &amp; solve</>}</button>
+              <button className="btn btn-primary w-full" onClick={validateAndSolve} disabled={solving}>{solving ? <><Loader2 size={15} className="animate-spin" /> Solving…</> : "Check and solve"}</button>
               <button className="btn btn-ghost w-full" onClick={restart}><RotateCcw size={15} /> Start over</button>
-              {errors.length > 0 && <div className="rounded-lg border border-red-400/40 bg-red-400/10 p-3 text-sm space-y-1"><div className="font-semibold text-red-400 flex items-center gap-1.5"><AlertTriangle size={15} /> This cube can&apos;t be solved as entered</div>{errors.map((e) => <div key={e} className="text-muted">• {e}</div>)}<div className="text-xs text-muted pt-1">Usually one or two stickers were misread — compare with your real cube.</div></div>}
+              {errors.length > 0 && <div className="border-l-2 border-bad pl-3 text-sm space-y-1"><div className="font-semibold text-bad">This cube can&apos;t be solved as entered</div>{errors.map((e) => <div key={e} className="text-muted">• {e}</div>)}<div className="text-xs text-muted pt-1">Usually one or two stickers were misread. Compare with your real cube.</div></div>}
             </div>
           </div>
         </div>
@@ -198,10 +197,9 @@ export function CubeScanner() {
 
       {result && (
         <div className="space-y-4">
-          <div className="rounded-xl border border-emerald-400/40 bg-emerald-400/10 p-3 text-sm flex flex-wrap items-center gap-3">
-            <CheckCircle2 className="text-emerald-400" size={18} />
-            <span>{result.solution ? <>Valid cube — solution in <strong>{parseAlg(result.solution).length}</strong> moves (verified with our cube model). Hold the cube with <strong>white on top and green in front</strong>, then follow along.</> : "This cube is already solved!"}</span>
-            <button className="btn btn-ghost ml-auto" onClick={restart}><RotateCcw size={15} /> Scan another</button>
+          <div className="border-l-2 border-ok pl-4 text-sm flex flex-wrap items-center gap-3">
+            <span>{result.solution ? <>Valid cube. Solution in <strong>{parseAlg(result.solution).length}</strong> moves (verified with our cube model). Hold the cube with <strong>white on top and green in front</strong>, then follow along.</> : "This cube is already solved."}</span>
+            <button className="btn btn-ghost ml-auto" onClick={restart}>Scan another</button>
           </div>
           {result.solution && <div className="font-mono text-sm card p-3 break-words">{result.solution}</div>}
           <CubeSimulator key={result.facelets} initialState={result.facelets} initialSequence={result.solution ? { label: "Scanned cube solution", moves: parseAlg(result.solution), startState: result.facelets } : null} />

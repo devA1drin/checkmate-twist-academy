@@ -3,8 +3,8 @@ import { CubeScanner } from "./cube-scanner";
 export const metadata = { title: "Cube Camera Scanner" };
 export default function Page() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
-      <PageHeader eyebrow="Cube Academy" title="Cube Camera Scanner" desc="Scan all six faces with your camera. Sticker colors are measured from the video and grouped using your cube's own center colors, then you review and correct them, the state is checked for physical validity, and the solver animates a solution on the 3D cube." />
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
+      <PageHeader eyebrow="Cube · Scanner" title="Scan a cube with your camera" desc="Show each face to the camera. The app measures every sticker's colour and groups them around the six centres. You check each face, impossible cubes are rejected, and the solution plays on the 3D cube." />
       <CubeScanner />
     </div>
   );

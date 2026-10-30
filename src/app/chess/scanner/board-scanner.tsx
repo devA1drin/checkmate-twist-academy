@@ -2,7 +2,7 @@
 import { Chess } from "chess.js";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Camera, Upload, Eraser, RotateCcw, Trash2, Cpu, Swords, Info, AlertTriangle, CheckCircle2, Square as SquareIcon, Grid3x3 } from "lucide-react";
+import { Camera, Upload, Eraser, RotateCcw, Trash2, AlertTriangle, CheckCircle2, Grid3x3 } from "lucide-react";
 import { Board } from "@/components/chess/board";
 import { useCamera, cameraUnavailableReason } from "@/lib/camera/use-camera";
 import { PrivacyNote } from "@/components/privacy-note";
@@ -83,10 +83,7 @@ export function BoardScanner() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-amber-400/40 bg-amber-400/5 p-3 text-sm flex gap-2.5">
-        <Info size={18} className="text-amber-400 shrink-0 mt-0.5" />
-        <div><strong>Honest note:</strong> this tool does <em>not</em> use AI to recognise pieces automatically. Reliable piece recognition from arbitrary photos needs a trained vision model we have not validated, so instead you place the pieces yourself on top of your photo. The engine analysis afterwards is real Stockfish 19.</div>
-      </div>
+      <p className="max-w-3xl border-l-2 border-ink pl-4 text-sm leading-relaxed"><strong className="font-medium">What this tool does.</strong> It does not recognise pieces on its own. Reading pieces from any photo needs a trained vision model we haven&apos;t tested well enough to trust, so you place the pieces yourself over your photo. The analysis afterwards is Stockfish 19, running in your browser.</p>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
         <div className="space-y-3">
@@ -101,24 +98,24 @@ export function BoardScanner() {
             {img && <button className="btn btn-ghost" onClick={() => setImg(null)}><Trash2 size={15} /> Remove photo</button>}
             <button className="btn btn-ghost" onClick={() => setShowGrid(!showGrid)}><Grid3x3 size={15} /> {showGrid ? "Hide" : "Show"} grid</button>
           </div>
-          {camReason && <p className="text-xs text-muted flex items-center gap-1.5"><AlertTriangle size={13} className="text-amber-400" /> {camReason}</p>}
-          {cam.error && <div className="rounded-lg border border-red-400/40 bg-red-400/10 p-3 text-sm flex gap-2"><AlertTriangle size={16} className="text-red-400 shrink-0 mt-0.5" />{cam.error}</div>}
+          {camReason && <p className="text-xs text-muted flex items-center gap-1.5"><AlertTriangle size={13} className="text-warn" /> {camReason}</p>}
+          {cam.error && <p className="border-l-2 border-bad pl-3 text-sm text-bad">{cam.error}</p>}
 
           <div className="relative card overflow-hidden bg-surface-2 select-none" style={{ minHeight: 320 }}>
             <video ref={cam.videoRef} playsInline muted className={cam.state === "live" ? "w-full block" : "hidden"} />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             {img && cam.state !== "live" && <img src={img} alt="Your chessboard photo (stays on this device)" className="w-full block" />}
-            {!img && cam.state !== "live" && <div className="absolute inset-0 grid place-items-center text-muted text-sm p-6 text-center"><div><SquareIcon className="mx-auto mb-2 opacity-50" />No photo yet — upload one or use the camera. You can also set up a position on the empty grid below.</div></div>}
+            {!img && cam.state !== "live" && <div className="absolute inset-0 grid place-items-center text-muted text-sm p-6 text-center"><div>No photo yet. Upload one or start the camera, or set up a position on the empty grid.</div></div>}
             {showGrid && (
-              <div className="absolute grid grid-cols-8 grid-rows-8 border-2 border-aqua/90" style={{ left: `${grid.x}%`, top: `${grid.y}%`, width: `${grid.w}%`, height: `${grid.h}%` }}>
+              <div className="absolute grid grid-cols-8 grid-rows-8 border-2 border-[#4cc9d9]" style={{ left: `${grid.x}%`, top: `${grid.y}%`, width: `${grid.w}%`, height: `${grid.h}%` }}>
                 {Array.from({ length: 64 }, (_, k) => {
                   const r = Math.floor(k / 8), c = k % 8; const [i, j] = toIdx(r, c); const p = board[i][j];
                   return (
                     <button key={k} onClick={() => place(r, c)} aria-label={`Square ${"abcdefgh"[j]}${8 - i}${p ? ` ${p}` : ""}`}
-                      className={`relative border border-aqua/40 hover:bg-electric/30 transition grid place-items-center ${(r + c) % 2 ? "bg-violet/10" : ""}`}>
+                      className={`relative border border-[#4cc9d9]/40 hover:bg-[#6b9fff]/30 grid place-items-center ${(r + c) % 2 ? "bg-black/10" : ""}`}>
                       {p && <span className="leading-none drop-shadow-[0_1px_2px_rgba(0,0,0,.9)] rounded bg-black/35 px-0.5" style={{ fontSize: "clamp(12px, 3.6vw, 34px)", color: p === p.toUpperCase() ? "#fff" : "#111", WebkitTextStroke: p === p.toUpperCase() ? "1px #111" : "1px #fff" }}>{GLYPH[p]}</span>}
-                      {c === 0 && <span className="absolute left-0.5 top-0 text-[9px] text-aqua">{8 - i}</span>}
-                      {r === 7 && <span className="absolute right-0.5 bottom-0 text-[9px] text-aqua">{"abcdefgh"[j]}</span>}
+                      {c === 0 && <span className="absolute left-0.5 top-0 text-[9px] text-[#4cc9d9]">{8 - i}</span>}
+                      {r === 7 && <span className="absolute right-0.5 bottom-0 text-[9px] text-[#4cc9d9]">{"abcdefgh"[j]}</span>}
                     </button>
                   );
                 })}
@@ -138,9 +135,9 @@ export function BoardScanner() {
 
         <div className="space-y-4">
           <div className="card p-4 space-y-3">
-            <div className="font-semibold">1 · Choose a piece, then tap squares</div>
+            <div className="eyebrow">1 · Choose a piece, then tap squares</div>
             <div className="grid grid-cols-6 gap-1.5">
-              {PALETTE.map((p) => <button key={p} onClick={() => setTool(p)} aria-label={`Place ${p}`} className={`aspect-square rounded-lg text-2xl grid place-items-center border ${tool === p ? "border-electric bg-electric/20" : "border-line bg-surface-2"}`}>{GLYPH[p]}</button>)}
+              {PALETTE.map((p) => <button key={p} onClick={() => setTool(p)} aria-label={`Place ${p}`} className={`aspect-square rounded-sm text-2xl grid place-items-center border ${tool === p ? "border-fg bg-fg text-bg" : "border-line hover:border-fg"}`}>{GLYPH[p]}</button>)}
             </div>
             <div className="flex flex-wrap gap-2">
               <button onClick={() => setTool("x")} className={`btn ${tool === "x" ? "btn-primary" : "btn-ghost"}`}><Eraser size={15} /> Eraser</button>
@@ -150,7 +147,7 @@ export function BoardScanner() {
             <p className="text-xs text-muted">Tapping a square that already holds the selected piece removes it.</p>
           </div>
           <div className="card p-4 space-y-3 text-sm">
-            <div className="font-semibold">2 · Position details</div>
+            <div className="eyebrow">2 · Position details</div>
             <label className="flex items-center justify-between gap-2">Photo orientation
               <select className="input !w-auto !py-1" value={whiteBottom ? "w" : "b"} onChange={(e) => setWhiteBottom(e.target.value === "w")}><option value="w">White at bottom</option><option value="b">Black at bottom</option></select></label>
             <label className="flex items-center justify-between gap-2">Side to move
@@ -160,13 +157,13 @@ export function BoardScanner() {
             ))}</div>
           </div>
           <div className="card p-4 space-y-3">
-            <div className="font-semibold">3 · Check and analyse</div>
+            <div className="eyebrow">3 · Check and analyse</div>
             <Board id="scan-preview" fen={fen} />
             <p className="font-mono text-[11px] break-all text-muted">{fen}</p>
-            {valid ? <p className="text-sm text-emerald-400 flex items-center gap-1.5"><CheckCircle2 size={15} /> Legal position</p> : <ul className="text-sm text-red-400 space-y-1">{problems.map((p) => <li key={p} className="flex gap-1.5"><AlertTriangle size={14} className="shrink-0 mt-0.5" />{p}</li>)}</ul>}
+            {valid ? <p className="text-sm text-ok flex items-center gap-1.5"><CheckCircle2 size={15} /> Legal position</p> : <ul className="text-sm text-bad space-y-1">{problems.map((p) => <li key={p} className="flex gap-1.5"><AlertTriangle size={14} className="shrink-0 mt-0.5" />{p}</li>)}</ul>}
             <div className="flex flex-wrap gap-2">
-              <Link aria-disabled={!valid} className={`btn btn-primary ${valid ? "" : "pointer-events-none opacity-50"}`} href={`/chess/analysis?fen=${encodeURIComponent(fen)}`}><Cpu size={15} /> Analyse with Stockfish</Link>
-              <Link aria-disabled={!valid} className={`btn btn-ghost ${valid ? "" : "pointer-events-none opacity-50"}`} href={`/chess/play?fen=${encodeURIComponent(fen)}`}><Swords size={15} /> Play from here</Link>
+              <Link aria-disabled={!valid} className={`btn btn-primary ${valid ? "" : "pointer-events-none opacity-50"}`} href={`/chess/analysis?fen=${encodeURIComponent(fen)}`}>Analyse with Stockfish</Link>
+              <Link aria-disabled={!valid} className={`btn btn-ghost ${valid ? "" : "pointer-events-none opacity-50"}`} href={`/chess/play?fen=${encodeURIComponent(fen)}`}>Play from here</Link>
             </div>
           </div>
         </div>

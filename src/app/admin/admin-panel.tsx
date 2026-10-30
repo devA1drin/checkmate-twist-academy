@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, ShieldAlert, Users, BarChart3, MessageSquare } from "lucide-react";
+import { Loader2, ShieldAlert } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { getSupabase } from "@/lib/supabase/client";
 import { BackendRequired } from "@/components/backend-required";
@@ -31,8 +31,8 @@ export function AdminPanel() {
 
   if (!configured) return <BackendRequired feature="Admin tools" />;
   if (loading) return <p className="text-muted flex items-center gap-2"><Loader2 size={15} className="animate-spin" /> Checking access…</p>;
-  if (!user) return <div className="card p-6 text-center"><ShieldAlert className="mx-auto text-amber-400" /><p className="mt-2">Please <Link href="/auth" className="text-electric hover:underline">sign in</Link> with an admin account.</p></div>;
-  if (!isAdmin) return <div className="card p-6 text-center"><ShieldAlert className="mx-auto text-red-400" /><p className="mt-2">Your account does not have the admin role.</p><p className="text-xs text-muted mt-1">Admins are promoted in the database — see the README.</p></div>;
+  if (!user) return <div className="card p-6 text-center"><ShieldAlert className="mx-auto text-warn" /><p className="mt-2">Please <Link href="/auth" className="text-electric hover:underline">sign in</Link> with an admin account.</p></div>;
+  if (!isAdmin) return <div className="card p-6 text-center"><ShieldAlert className="mx-auto text-bad" /><p className="mt-2">Your account does not have the admin role.</p><p className="text-xs text-muted mt-1">Admins are promoted in the database — see the README.</p></div>;
   const sb = getSupabase()!;
 
   const setRole = async (id: string, role: string) => { const { error } = await sb.rpc("admin_set_role", { target: id, new_role: role }); if (error) setError(error.message); else load(); };
@@ -41,15 +41,15 @@ export function AdminPanel() {
 
   return (
     <div className="space-y-8">
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-bad">{error}</p>}
       <section>
-        <h2 className="font-semibold mb-3 flex items-center gap-2"><BarChart3 size={17} className="text-aqua" /> Usage</h2>
+        <h2 className="font-display text-2xl font-semibold mb-3">Usage</h2>
         <div className="grid gap-3 grid-cols-2 sm:grid-cols-4 lg:grid-cols-7">
-          {stats ? Object.entries(stats).map(([k, v]) => <div key={k} className="card p-3"><div className="text-xl font-bold font-mono">{v}</div><div className="text-xs text-muted capitalize">{k.replace(/_/g, " ")}</div></div>) : <Loader2 className="animate-spin" />}
+          {stats ? Object.entries(stats).map(([k, v]) => <div key={k} className="border-t border-ink pt-2"><div className="font-display text-2xl tabular-nums">{v}</div><div className="text-xs text-muted capitalize">{k.replace(/_/g, " ")}</div></div>) : <Loader2 className="animate-spin" />}
         </div>
       </section>
       <section>
-        <h2 className="font-semibold mb-3 flex items-center gap-2"><Users size={17} className="text-aqua" /> Users &amp; roles</h2>
+        <h2 className="font-display text-2xl font-semibold mb-3">Users and roles</h2>
         <div className="card overflow-auto">
           <table className="w-full text-sm"><thead className="bg-surface-2 text-left text-muted"><tr><th className="p-2">Email</th><th className="p-2">Name</th><th className="p-2">Joined</th><th className="p-2">Role</th></tr></thead>
             <tbody>{users.map((u) => (
@@ -59,7 +59,7 @@ export function AdminPanel() {
         </div>
       </section>
       <section>
-        <h2 className="font-semibold mb-3 flex items-center gap-2"><MessageSquare size={17} className="text-aqua" /> Moderation</h2>
+        <h2 className="font-display text-2xl font-semibold mb-3">Moderation</h2>
         {posts.length === 0 ? <p className="text-sm text-muted">No posts.</p> : (
           <div className="card divide-y divide-line">{posts.map((p) => (
             <div key={p.id} className="p-3 flex items-center gap-3 text-sm"><span className="chip">{p.category}</span><span className={`flex-1 ${p.hidden ? "line-through text-muted" : ""}`}>{p.title}</span>

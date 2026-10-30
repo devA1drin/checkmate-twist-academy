@@ -7,8 +7,8 @@ import { STICKER_COLORS_2D } from "./colors";
  */
 export function CaseDiagram({ alg, mode, size = 104 }: { alg: string; mode: "OLL" | "PLL" | "F2L"; size?: number }) {
   let s: string;
-  try { s = caseState(alg); } catch { return <div className="text-xs text-red-400">invalid alg</div>; }
-  const color = (i: number) => (s[i] === "U" ? STICKER_COLORS_2D.D : "#2b3557");
+  try { s = caseState(alg); } catch { return <div className="text-xs text-bad">invalid alg</div>; }
+  const color = (i: number) => (s[i] === "U" ? STICKER_COLORS_2D.D : "var(--surface-2)");
   const pal = (i: number) => {
     const c = s[i];
     if (mode === "OLL") return color(i);
@@ -24,12 +24,12 @@ export function CaseDiagram({ alg, mode, size = 104 }: { alg: string; mode: "OLL
   return (
     <svg viewBox={`0 0 ${W} ${W}`} width={size} height={size} role="img" aria-label={`${mode} case diagram`}>
       {top.map((i) => (
-        <rect key={i} x={o + (i % 3) * (cell + gap)} y={o + Math.floor(i / 3) * (cell + gap)} width={cell} height={cell} rx={3} fill={pal(i)} stroke="#060a18" strokeWidth={0.8} />
+        <rect key={i} x={o + (i % 3) * (cell + gap)} y={o + Math.floor(i / 3) * (cell + gap)} width={cell} height={cell} rx={1.5} style={{ fill: pal(i) }} stroke="#0b1220" strokeWidth={0.8} />
       ))}
-      {back.map((i, k) => <rect key={`b${i}`} x={o + k * (cell + gap)} y={2} width={cell} height={side} rx={2} fill={pal(i)} stroke="#060a18" strokeWidth={0.6} />)}
-      {front.map((i, k) => <rect key={`f${i}`} x={o + k * (cell + gap)} y={o + 3 * cell + 2 * gap + gap} width={cell} height={side} rx={2} fill={pal(i)} stroke="#060a18" strokeWidth={0.6} />)}
-      {left.map((i, k) => <rect key={`l${i}`} x={2} y={o + k * (cell + gap)} width={side} height={cell} rx={2} fill={pal(i)} stroke="#060a18" strokeWidth={0.6} />)}
-      {right.map((i, k) => <rect key={`r${i}`} x={o + 3 * cell + 2 * gap + gap} y={o + k * (cell + gap)} width={side} height={cell} rx={2} fill={pal(i)} stroke="#060a18" strokeWidth={0.6} />)}
+      {back.map((i, k) => <rect key={`b${i}`} x={o + k * (cell + gap)} y={2} width={cell} height={side} rx={1} style={{ fill: pal(i) }} stroke="#0b1220" strokeWidth={0.6} />)}
+      {front.map((i, k) => <rect key={`f${i}`} x={o + k * (cell + gap)} y={o + 3 * cell + 2 * gap + gap} width={cell} height={side} rx={1} style={{ fill: pal(i) }} stroke="#0b1220" strokeWidth={0.6} />)}
+      {left.map((i, k) => <rect key={`l${i}`} x={2} y={o + k * (cell + gap)} width={side} height={cell} rx={1} style={{ fill: pal(i) }} stroke="#0b1220" strokeWidth={0.6} />)}
+      {right.map((i, k) => <rect key={`r${i}`} x={o + 3 * cell + 2 * gap + gap} y={o + k * (cell + gap)} width={side} height={cell} rx={1} style={{ fill: pal(i) }} stroke="#0b1220" strokeWidth={0.6} />)}
     </svg>
   );
 }

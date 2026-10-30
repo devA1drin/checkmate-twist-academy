@@ -6,20 +6,20 @@ import { Play } from "lucide-react";
 export function YouTubeLite({ id, title, channel }: { id: string; title: string; channel?: string }) {
   const [on, setOn] = useState(false);
   return (
-    <div className="card overflow-hidden">
-      <div className="relative aspect-video bg-black">
+    <div>
+      <div className="relative aspect-video bg-[#0b1220] border border-line">
         {on ? (
           <iframe className="absolute inset-0 h-full w-full" src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`} title={title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
         ) : (
           <button onClick={() => setOn(true)} className="group absolute inset-0" aria-label={`Play ${title}`}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt="" className="h-full w-full object-cover opacity-85 group-hover:opacity-100 transition" loading="lazy" />
-            <span className="absolute inset-0 grid place-items-center"><span className="grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-electric to-violet text-white shadow-lg group-hover:scale-110 transition"><Play size={24} fill="white" /></span></span>
+            <img src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt="" className="h-full w-full object-cover" loading="lazy" />
+            <span className="absolute left-0 bottom-0 inline-flex items-center gap-1.5 bg-[#0b1220] text-[#ebe7de] text-xs font-medium px-2.5 py-1.5 group-hover:bg-[#1d4fd8]"><Play size={12} fill="currentColor" aria-hidden /> Play</span>
           </button>
         )}
       </div>
-      <div className="p-3">
-        <div className="text-sm font-semibold leading-snug">{title}</div>
+      <div className="pt-2.5">
+        <div className="text-[15px] font-medium leading-snug">{title}</div>
         {channel && <div className="text-xs text-muted mt-0.5">{channel} · YouTube</div>}
       </div>
     </div>

@@ -15,8 +15,8 @@ export interface BoardProps {
   className?: string;
 }
 
-const DARK = { backgroundColor: "#3b4f8f" };
-const LIGHT = { backgroundColor: "#c9d6ff" };
+const DARK = { backgroundColor: "var(--board-dark)" };
+const LIGHT = { backgroundColor: "var(--board-light)" };
 
 /** react-chessboard with drag-and-drop and tap-to-move, legal-move hints and last-move highlight. */
 export function Board({ id, fen, orientation = "white", onMove, arrows, highlight, lastMove, className }: BoardProps) {
@@ -29,12 +29,12 @@ export function Board({ id, fen, orientation = "white", onMove, arrows, highligh
   }, [selected, game]);
 
   const styles: Record<string, React.CSSProperties> = {};
-  if (lastMove) for (const s of lastMove) styles[s] = { backgroundColor: "rgba(34,211,238,0.38)" };
-  if (selected) styles[selected] = { backgroundColor: "rgba(139,92,246,0.55)" };
-  for (const t of targets) styles[t] = { ...styles[t], backgroundImage: "radial-gradient(circle, rgba(59,130,255,.75) 22%, transparent 24%)" };
+  if (lastMove) for (const s of lastMove) styles[s] = { boxShadow: "inset 0 0 0 100px rgba(230,190,60,.42)" };
+  if (selected) styles[selected] = { boxShadow: "inset 0 0 0 3px var(--blue)" };
+  for (const t of targets) styles[t] = { ...styles[t], backgroundImage: "radial-gradient(circle, rgba(15,20,32,.38) 18%, transparent 20%)" };
   if (game?.inCheck()) {
     const b = game.board();
-    for (const row of b) for (const p of row) if (p && p.type === "k" && p.color === game.turn()) styles[p.square] = { ...styles[p.square], background: "radial-gradient(circle, rgba(239,68,68,.9) 0%, rgba(239,68,68,.35) 60%, transparent 75%)" };
+    for (const row of b) for (const p of row) if (p && p.type === "k" && p.color === game.turn()) styles[p.square] = { ...styles[p.square], boxShadow: "inset 0 0 0 3px #d93a2b" };
   }
   Object.assign(styles, highlight);
 
@@ -45,7 +45,7 @@ export function Board({ id, fen, orientation = "white", onMove, arrows, highligh
       <Chessboard options={{
         id, position: fen, boardOrientation: orientation, arrows: arrows ?? [], squareStyles: styles,
         allowDragging: !!onMove, darkSquareStyle: DARK, lightSquareStyle: LIGHT, animationDurationInMs: 180,
-        boardStyle: { borderRadius: "12px", overflow: "hidden", boxShadow: "0 10px 40px -15px rgba(59,130,255,.5)" },
+        boardStyle: { borderRadius: "2px", overflow: "hidden", border: "1px solid var(--border)" },
         canDragPiece: ({ square }) => !!onMove && !!square && ownPiece(square),
         onPieceDrop: ({ sourceSquare, targetSquare }) => {
           setSelected(null);

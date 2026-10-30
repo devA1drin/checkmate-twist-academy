@@ -75,15 +75,15 @@ export function AuthPanel() {
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.show_on_leaderboard} onChange={(e) => setForm({ ...form, show_on_leaderboard: e.target.checked })} /> Show me on public leaderboards</label>
         <button className="btn btn-primary" disabled={busy}>{busy && <Loader2 size={15} className="animate-spin" />} Save</button>
       </form>
-      {msg && <p className={`text-sm ${msg.ok ? "text-emerald-400" : "text-red-400"}`}>{msg.text}</p>}
+      {msg && <p className={`text-sm ${msg.ok ? "text-ok" : "text-bad"}`}>{msg.text}</p>}
       <div className="flex gap-2"><Link href="/dashboard" className="btn btn-ghost">Dashboard</Link><button className="btn btn-ghost" onClick={async () => { await signOut(); router.push("/"); }}><LogOut size={15} /> Sign out</button></div>
     </div>
   );
 
   return (
-    <div className="card p-5 space-y-4">
-      <div className="grid grid-cols-3 gap-1 rounded-xl bg-surface-2 p-1 text-sm">
-        {([["signin", "Sign in"], ["signup", "Create account"], ["magic", "Magic link"]] as const).map(([k, l]) => <button key={k} onClick={() => { setTab(k); setMsg(null); }} className={`rounded-lg py-1.5 font-medium ${tab === k ? "bg-surface shadow text-fg" : "text-muted"}`}>{l}</button>)}
+    <div className="max-w-md space-y-5">
+      <div className="grid grid-cols-3 border border-line rounded-md overflow-hidden text-sm" role="tablist">
+        {([["signin", "Sign in"], ["signup", "Create account"], ["magic", "Magic link"]] as const).map(([k, l]) => <button key={k} onClick={() => { setTab(k); setMsg(null); }} role="tab" aria-selected={tab === k} className={`py-2 font-medium border-r border-line last:border-r-0 ${tab === k ? "bg-fg text-bg" : "text-muted hover:text-fg"}`}>{l}</button>)}
       </div>
       <form onSubmit={submit} className="space-y-3">
         {tab === "signup" && <label className="block text-sm">Display name<input className="input mt-1" maxLength={40} value={name} onChange={(e) => setName(e.target.value)} /></label>}
@@ -91,7 +91,7 @@ export function AuthPanel() {
         {tab !== "magic" && <label className="block text-sm">Password<input className="input mt-1" type="password" required minLength={tab === "signup" ? 8 : undefined} autoComplete={tab === "signup" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} /></label>}
         <button className="btn btn-primary w-full" disabled={busy}>{busy ? <Loader2 size={15} className="animate-spin" /> : tab === "magic" ? <Mail size={15} /> : <KeyRound size={15} />}{tab === "signin" ? "Sign in" : tab === "signup" ? "Create account" : "Email me a magic link"}</button>
       </form>
-      {msg && <p className={`text-sm flex gap-1.5 ${msg.ok ? "text-emerald-400" : "text-red-400"}`}>{msg.ok ? <CheckCircle2 size={15} /> : <AlertTriangle size={15} />}{msg.text}</p>}
+      {msg && <p className={`text-sm flex gap-1.5 ${msg.ok ? "text-ok" : "text-bad"}`}>{msg.ok ? <CheckCircle2 size={15} /> : <AlertTriangle size={15} />}{msg.text}</p>}
       <p className="text-xs text-muted">Your guest progress stays in this browser; after signing in you can import it from the dashboard. See our <Link href="/privacy" className="text-electric hover:underline">privacy notes</Link>.</p>
     </div>
   );
