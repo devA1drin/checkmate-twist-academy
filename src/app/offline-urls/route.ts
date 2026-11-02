@@ -10,7 +10,7 @@ export function GET() {
     "/", "/offline", "/learn", "/dashboard", "/practice", "/quizzes", "/daily",
     "/chess", "/chess/play", "/chess/analysis", "/chess/puzzles",
     "/cube", "/cube/timer", "/cube/simulator", "/cube/algorithms",
-    "/openings",
+    "/openings", "/openings/explorer", "/openings/repertoire",
     ...CHESS_LESSONS.map((l) => `/chess/lessons/${l.slug}`),
     ...CUBE_LESSONS.map((l) => `/cube/lessons/${l.slug}`),
     ...KITS.map((k) => `/openings/${k.slug}`),
@@ -18,6 +18,7 @@ export function GET() {
   const files = [
     "/stockfish/stockfish-19-lite-single.js", "/stockfish/stockfish-19-lite-single.wasm",
     "/workers/cube-solver.js", "/vendor/cubejs/cube.js", "/vendor/cubejs/solve.js",
+    "/data/openings-index.json", "/fonts/pdf/DejaVuSans.ttf", "/fonts/pdf/DejaVuSans-Bold.ttf",
     "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png",
   ];
   return Response.json({ build: process.env.NEXT_PUBLIC_BUILD_ID ?? "dev", pages, files });

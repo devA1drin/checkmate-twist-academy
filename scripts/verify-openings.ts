@@ -1,11 +1,18 @@
 // Validates every opening kit: all move strings are legal (chess.js), each line's ECO code
 // matches the lichess-org/chess-openings classification of its position, model-game PGNs are
 // legal and match their stated result source, and kit video links point at known video IDs.
+// Also checks the generated openings index is current, every kit has variations in it, every
+// character used in kit text exists in the PDF font, and a PDF guide builds for every kit.
 import { Chess } from "chess.js";
 import { readFileSync } from "node:fs";
 import { KITS } from "../src/data/openings/kits";
 import games from "../src/data/openings/model-games.json";
 import videos from "../src/data/videos.json";
+import fontkit from "@pdf-lib/fontkit";
+import { PDFDocument } from "pdf-lib";
+import { buildIndex } from "./build-openings-index";
+import { kitForOpening } from "../src/lib/openings/kit-map";
+import { buildOpeningsPdf } from "../src/lib/openings/pdf";
 
 let fails = 0, checked = 0;
 const fail = (m: string) => { fails++; console.log("FAIL", m); };
@@ -58,5 +65,41 @@ for (const [slug, list] of Object.entries(games as Record<string, { white: strin
 }
 for (const k of KITS) if (!(games as Record<string, unknown[]>)[k.slug]?.length) fail(`${k.slug}: no model games`);
 void ids;
-console.log(`\n${KITS.length} kits, ${checked} lines/traps/structures/games checked, ${fails} failures`);
-process.exit(fails ? 1 : 0);
+
+// Model games must be classified (by lichess data) as an opening this kit teaches, or a close relative.
+for (const [slug, list] of Object.entries(games as Record<string, { white: string; black: string; moves: string }[]>)) {
+  for (const g of list) {
+    const cl = classify(g.moves);
+    const kit = cl && kitForOpening(cl.name);
+    if (!cl) fail(`game ${g.white}-${g.black}: no opening classification`);
+    else if (kit !== slug) console.log(`note ${slug}: game ${g.white}-${g.black} is classified ${cl.name} (${kit ?? "no kit"})`);
+  }
+}
+
+// Openings index (public/data/openings-index.json) must match a fresh build from the TSV.
+const idxJson = readFileSync("public/data/openings-index.json", "utf8");
+if (idxJson !== buildIndex()) fail("public/data/openings-index.json is stale: run tsx scripts/build-openings-index.ts");
+const idx = JSON.parse(idxJson) as { count: number; rows: string[][] };
+if (idx.count < 3500) fail(`openings index has only ${idx.count} entries`);
+for (const k of KITS) if (!idx.rows.some((r) => r[4] === k.slug)) fail(`${k.slug}: no openings in the index map to this kit`);
+console.log(`index: ${idx.count} openings, ${idx.rows.filter((r) => r[4]).length} linked to a kit`);
+
+(async () => {
+  // Every character in kit text must exist in the PDF font, otherwise the PDF shows empty boxes.
+  const regular = readFileSync("public/fonts/pdf/DejaVuSans.ttf"), bold = readFileSync("public/fonts/pdf/DejaVuSans-Bold.ttf");
+  const font = fontkit.create(regular);
+  const chars = new Set<string>();
+  const vlist = videos as { id: string; title: string; channel: string; kit?: string }[];
+  for (const t of [JSON.stringify(KITS), JSON.stringify(games)]) for (const ch of t) chars.add(ch); // video titles are cleaned by the PDF writer
+  for (const ch of chars) if (ch.codePointAt(0)! >= 32 && !font.hasGlyphForCodePoint(ch.codePointAt(0)!)) fail(`PDF font has no glyph for "${ch}" (U+${ch.codePointAt(0)!.toString(16).toUpperCase()})`);
+  // Build a guide for each kit and one repertoire with every kit; check they parse back.
+  for (const k of KITS) {
+    const bytes = await buildOpeningsPdf({ kits: [k], games: games as never, videos: vlist, fonts: { regular, bold } });
+    const doc = await PDFDocument.load(bytes);
+    if (doc.getPageCount() < 2) fail(`${k.slug}: PDF guide has ${doc.getPageCount()} page`);
+  }
+  const all = await PDFDocument.load(await buildOpeningsPdf({ kits: KITS, games: games as never, videos: vlist, fonts: { regular, bold }, title: "All kits" }));
+  console.log(`pdf: ${KITS.length} kit guides built, full repertoire ${all.getPageCount()} pages`);
+  console.log(`\n${KITS.length} kits, ${checked} lines/traps/structures/games checked, ${fails} failures`);
+  process.exit(fails ? 1 : 0);
+})();

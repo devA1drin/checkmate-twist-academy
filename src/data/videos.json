@@ -735,5 +735,824 @@
   "category": "cube",
   "level": "Intermediate",
   "topic": "zz"
+ },
+ {
+  "id": "LEz-QvHMjp8",
+  "title": "Two Knights Defense Fritz Variation [Traps To Win Fast]",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "two-knights"
+ },
+ {
+  "id": "0GkyWrCskNY",
+  "title": "Two Knights Defense with 4. Ng5 | Chess Openings Explained",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "two-knights"
+ },
+ {
+  "id": "fG52OQytDxc",
+  "title": "Learn the Evans and Nakhmanson Gambit | 10-Minute Chess Openings",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "evans-gambit"
+ },
+ {
+  "id": "-BtExQvYc5g",
+  "title": "Evans Gambit | Best Chess Opening For 1600 ELO",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "evans-gambit"
+ },
+ {
+  "id": "Iuzy5xqZmhU",
+  "title": "WIN 84% Games After 1.e4 With This Trap [Evans Gambit]",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "evans-gambit"
+ },
+ {
+  "id": "JVxENCPcCjU",
+  "title": "WIN WITH 1. E4 | The Vienna Gambit",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "vienna"
+ },
+ {
+  "id": "6QQ5sw-SgNw",
+  "title": "The Vienna Game | Chess Openings Explained",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "vienna"
+ },
+ {
+  "id": "tRoZ1bS_3_s",
+  "title": "How to Win With the Vienna Gambit",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "vienna"
+ },
+ {
+  "id": "0LvJ8POFH1g",
+  "title": "Top 5 Fastest WINS in the King's Gambit",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "kings-gambit"
+ },
+ {
+  "id": "S2hd1UxEAvo",
+  "title": "The King's Gambit (chess opening) explained in 4 minutes by a chess master",
+  "channel": "Chess Vibes",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "kings-gambit"
+ },
+ {
+  "id": "8NPTtaVTF50",
+  "title": "76% Win Rate Checkmate TRAP [King's Gambit]",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "kings-gambit"
+ },
+ {
+  "id": "432VtltHVaA",
+  "title": "Four Knights Game - Chess Openings Explained",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "four-knights"
+ },
+ {
+  "id": "HizPoJ_2GPs",
+  "title": "Four Knights Game: Italian Variation [Opening Mistake]",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "four-knights"
+ },
+ {
+  "id": "m9C7zbtUMqI",
+  "title": "Four Knights Game, Spanish Variation",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "four-knights"
+ },
+ {
+  "id": "wRLpQ4VSAJ0",
+  "title": "How To Punish The Copycat Opening in Chess [Petrov's Defense]",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "petrov"
+ },
+ {
+  "id": "Tg7ZJ82-o6g",
+  "title": "Petrov's Defense Damiano Variation [Kholmov Gambit]",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "petrov"
+ },
+ {
+  "id": "Sb4-IaKBj_s",
+  "title": "The Petrov Defense with Humpy!",
+  "channel": "Chess.com",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "petrov"
+ },
+ {
+  "id": "Q4bp4qlRqGg",
+  "title": "Introduction to the Philidor Defense",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "philidor"
+ },
+ {
+  "id": "H81kiNIZ8hA",
+  "title": "Getting Squeezed in the Philidor Defense",
+  "channel": "John Bartholomew",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "philidor"
+ },
+ {
+  "id": "YK8P9JMoj0o",
+  "title": "Sicilian Defense Accelerated Dragon | Chess Opening Crash Course",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "sicilian-dragon"
+ },
+ {
+  "id": "bCpeBsjPkC4",
+  "title": "Basic Openings for Black | Sicilian Dragon & King's Indian | Chess with David Pakman",
+  "channel": "Eric Rosen",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "sicilian-dragon"
+ },
+ {
+  "id": "YzI6qI-33_U",
+  "title": "Understanding the Accelerated Dragon!! | Open Sicilian | GM Naroditsky's Theory Speed Run",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "sicilian-dragon"
+ },
+ {
+  "id": "tc62U2mPyOA",
+  "title": "Sveshnikov Sicilian | Chess Openings Explained",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "sveshnikov"
+ },
+ {
+  "id": "Y7i9SXJDft4",
+  "title": "Magnus Carlsen's Sveshnikov Smashes Jose Martinez in 25 Moves",
+  "channel": "ChessNetwork",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "sveshnikov"
+ },
+ {
+  "id": "vM5KUWXPkbo",
+  "title": "Sveshnikov Variation | Sicilian Defense Theory",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "sveshnikov"
+ },
+ {
+  "id": "QYLfdUWAUWs",
+  "title": "Judit Polgar's CLOSE CALL in the Sicilian Taimanov",
+  "channel": "ChessNetwork",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "taimanov"
+ },
+ {
+  "id": "Z5y7Qm_nu-o",
+  "title": "Build Your Sicilian Taimanov Repertoire | Grandmaster's Choice - GM Elshan Moradiabadi",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "taimanov"
+ },
+ {
+  "id": "YHdaxVQOwho",
+  "title": "How to beat the Taimanov | India no.6 S.P. Sethuraman | New book",
+  "channel": "ChessBase India",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "taimanov"
+ },
+ {
+  "id": "9CxgfDX44Ug",
+  "title": "Sicilian Kan ⎸Chess Openings",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "kan"
+ },
+ {
+  "id": "PmzWor4z-FE",
+  "title": "Basic Opening Chess Trap | Sicilian Kan | The wife strikes again!",
+  "channel": "ChessBase India",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "kan"
+ },
+ {
+  "id": "-6QDoxLrQoM",
+  "title": "How to play the Sicilian Kan (Part I) | ChessBase India Coaching (Live)",
+  "channel": "ChessBase India",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "kan"
+ },
+ {
+  "id": "fkhAA4S8qL8",
+  "title": "The Alapin Sicilian (2.c3) is Simple and Effective | Climbing the Rating Ladder vs. 1819",
+  "channel": "John Bartholomew",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "alapin"
+ },
+ {
+  "id": "WisFv1fkRy4",
+  "title": "DESTROY the Sicilian Defense in 10 Moves | The Alapin Variation",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "alapin"
+ },
+ {
+  "id": "-0Z8Xf8mX-E",
+  "title": "Crush the Sicilian Defense: TRAPS in Alapin Variation",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "alapin"
+ },
+ {
+  "id": "AWE8nHXFR3U",
+  "title": "How to Play the Smith-Morra Gambit Theory and Traps Explained | Best Sicilian Counter",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "smith-morra"
+ },
+ {
+  "id": "YY2SiQkvbAE",
+  "title": "Chess Opening: Smith–Morra Gambit | Interesting Ideas & Plans",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "smith-morra"
+ },
+ {
+  "id": "w9n36SfEhfU",
+  "title": "Smith–Morra Gambit | Deep Dive Breakdown!! | The Sensei Speedrun | GM Naroditsky",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "smith-morra"
+ },
+ {
+  "id": "5bsKlnGLI7g",
+  "title": "Closed Sicilian: Ideas, Principles and Common Variations · Chess Openings",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "closed-sicilian"
+ },
+ {
+  "id": "kO23hnArI4Y",
+  "title": "Winning with Strategy!! | Closed Sicilian | GM Naroditsky's Theory Speed Run",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "closed-sicilian"
+ },
+ {
+  "id": "vYtXb1Fl7NU",
+  "title": "The Closed Sicilian explained by GM Alex Colovic",
+  "channel": "Chessable",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "closed-sicilian"
+ },
+ {
+  "id": "nBYZ_H6u_9c",
+  "title": "Pirc Defense: Beginner-Friendly Opening That Wins",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "pirc"
+ },
+ {
+  "id": "XM50BNbLOpc",
+  "title": "GM Rustam Kasimdzhanov on the Pirc defense!",
+  "channel": "Chessable",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "pirc"
+ },
+ {
+  "id": "yLn_JztoF8Y",
+  "title": "Beat the King's Indian or Pirc Defense Setup",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "pirc"
+ },
+ {
+  "id": "tTsDS_6Zaa8",
+  "title": "WIN In 6 Moves After 1.e4 | Modern Defense Counter TRAP",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "modern-defence"
+ },
+ {
+  "id": "E8Y3AyoaTd4",
+  "title": "I'm Testing The Modern Defense On Chess.com",
+  "channel": "Chess Vibes",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "modern-defence"
+ },
+ {
+  "id": "slNeLTit2J8",
+  "title": "Modern Defense | Ideas, Principles and Common Variations",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "modern-defence"
+ },
+ {
+  "id": "IeH0zBjncNU",
+  "title": "Alekhine's Defense O'Sullivan Gambit (Theory, Traps and Ideas)",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "alekhine"
+ },
+ {
+  "id": "OQsa_sdKzjY",
+  "title": "Master Class | Alekhine Defense | Chess Speedrun | Grandmaster Naroditsky",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "alekhine"
+ },
+ {
+  "id": "34u0e4etsxY",
+  "title": "Alekhine's Insane KING HUNT Checkmate",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "alekhine"
+ },
+ {
+  "id": "-FvJC_j5ZTY",
+  "title": "Chess Openings: How to Play the Queen's Gambit Accepted",
+  "channel": "Chess.com",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "qga"
+ },
+ {
+  "id": "S2e_rZ4l6iM",
+  "title": "Crush the Queen's Gambit as Black | Accepted Variation",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "qga"
+ },
+ {
+  "id": "hX6W4X_CqkA",
+  "title": "Master Class | Queen's Gambit Accepted | Chess Speedrun | Grandmaster Naroditsky",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "qga"
+ },
+ {
+  "id": "OXffjL9fLAw",
+  "title": "Introduction to the Semi-Slav Defense",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "semi-slav"
+ },
+ {
+  "id": "KJxIGyrHfFA",
+  "title": "The Meran Semi-Slav",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "semi-slav"
+ },
+ {
+  "id": "g1Uh3S-pPaA",
+  "title": "The Complete Semi-Slav Part 1: The Classical Meran (8...a6) | Chess Openings Explained",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "semi-slav"
+ },
+ {
+  "id": "nMuvv1HksL4",
+  "title": "How to play the Catalan | 10-Minute Chess Openings",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "catalan"
+ },
+ {
+  "id": "cnBzEQ1167M",
+  "title": "Magnus Carlsen Teaches The Catalan Opening",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "catalan"
+ },
+ {
+  "id": "s0mAzxJRHpk",
+  "title": "Introduction to the Catalan",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "catalan"
+ },
+ {
+  "id": "dJWqv7CCKoI",
+  "title": "Colle System Chess Opening For White",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "colle"
+ },
+ {
+  "id": "FN7xJhjCxkY",
+  "title": "The Colle System - Plans, Structures, Patterns, Variations · Chess Openings",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "colle"
+ },
+ {
+  "id": "G1UYYjxZ68U",
+  "title": "How to Play the Colle–Zukertort System | Complete Opening Guide for White",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "colle"
+ },
+ {
+  "id": "Z_mHj4t_HqQ",
+  "title": "Master the Trompowsky Attack & Win in 7 Moves (No Prep Needed)",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "trompowsky"
+ },
+ {
+  "id": "79-toxo-ebU",
+  "title": "CRUSH People With The Trompowsky Attack!",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "trompowsky"
+ },
+ {
+  "id": "VA6O3UWXNSU",
+  "title": "Win In 7 Moves After 1.d4 | Powerful Trompowsky Attack",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "trompowsky"
+ },
+ {
+  "id": "6uFhzy3VnXA",
+  "title": "Crushing Through the Kingside | Jobava London | GM Naroditsky’s Theory Speed Run",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "jobava-london"
+ },
+ {
+  "id": "dqYU2XP72pM",
+  "title": "Bishop & Knight for a Rook?! Sneaky!! | Jobava London | GM Naroditsky’s Theory Speed Run",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "jobava-london"
+ },
+ {
+  "id": "AiLl1_a9D_w",
+  "title": "WIN IN 3 MOVES: The Jobava London System",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "jobava-london"
+ },
+ {
+  "id": "tiDCW-NO848",
+  "title": "Chess Openings: How to Play the Queen's Indian!",
+  "channel": "Chess.com",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "queens-indian"
+ },
+ {
+  "id": "jNYdCJjbxAI",
+  "title": "Ivanchuk's Queen's Indian Crushes Jobava in 30 moves",
+  "channel": "ChessNetwork",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "queens-indian"
+ },
+ {
+  "id": "mfe1Jb22VHM",
+  "title": "Introduction to the Bogo-Indian Defense",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "bogo-indian"
+ },
+ {
+  "id": "4mJ5BqXK4gs",
+  "title": "Bogo-Indian Defense, Exchange Variation",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "bogo-indian"
+ },
+ {
+  "id": "9ON4CQbL2Dw",
+  "title": "The Bogo Indian Prep | Sagar Shah vs the Grandmasters | Zakhartsov (2548) | Ep02",
+  "channel": "ChessBase India",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "bogo-indian"
+ },
+ {
+  "id": "C1EbPsdB4FM",
+  "title": "Exchange Variation of the Grünfeld Defense",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "grunfeld"
+ },
+ {
+  "id": "pHBHoXrbXhg",
+  "title": "The Grünfeld Defence - Chess Openings Explained",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "grunfeld"
+ },
+ {
+  "id": "R3sT1d_npnQ",
+  "title": "The Modern Benoni is No Baloney: Part 1 - Chess Openings Explained",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "benoni"
+ },
+ {
+  "id": "RwqrGD32L1I",
+  "title": "A Road Map Within the Modern Benoni - GM Yasser Seirawan - 2014.10.14",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Advanced",
+  "topic": "openings",
+  "kit": "benoni"
+ },
+ {
+  "id": "NOMC4shNMp8",
+  "title": "Chess Openings: How to Play the Benko Gambit",
+  "channel": "Chess.com",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "benko"
+ },
+ {
+  "id": "Fwc0j8P_DKs",
+  "title": "Benko Gambit - Chess Openings Explained",
+  "channel": "Saint Louis Chess Club",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "benko"
+ },
+ {
+  "id": "ogmGNIk6W7I",
+  "title": "Learn the Dutch Defense Setup | 10-Minute Chess Openings",
+  "channel": "GothamChess",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "dutch"
+ },
+ {
+  "id": "ZKQOh7wcW5I",
+  "title": "WIN In 6 Moves | Dutch Defense TRAP",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "dutch"
+ },
+ {
+  "id": "hVNzZi0EBfo",
+  "title": "Introduction to the Dutch Defense · Chess Openings",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "dutch"
+ },
+ {
+  "id": "vSnN50aP3p4",
+  "title": "Crush 1.d4 with the Budapest Gambit – Every Move Is a Trap!",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "budapest"
+ },
+ {
+  "id": "MIhaW6HKYBw",
+  "title": "WIN In 5 Moves | Budapest Gambit TRAP",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "budapest"
+ },
+ {
+  "id": "GHAYsm8FOh0",
+  "title": "The Budapest Gambit · Chess Openings",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "budapest"
+ },
+ {
+  "id": "eStsxnEzvI4",
+  "title": "Réti Opening: Ideas, Principles, Theory, Transpositions, Structures · Chess Openings",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "reti"
+ },
+ {
+  "id": "Nqehf401il4",
+  "title": "Reti Opening Accepted Variation [Chess Opening Guide]",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "reti"
+ },
+ {
+  "id": "dYJXxMAIp3k",
+  "title": "A Simple Réti Repertoire: avoid e4 and d4 main lines without 100 hours of study",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Intermediate",
+  "topic": "openings",
+  "kit": "reti"
+ },
+ {
+  "id": "6wK5yZmQnDc",
+  "title": "How To Play The Bird Opening | Underrated Chess Opening",
+  "channel": "Remote Chess Academy",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "bird"
+ },
+ {
+  "id": "wtTk2pd1xlk",
+  "title": "Bird Opening: Ideas, Structures, Principles, Theory, Transpositions · Chess Openings",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "bird"
+ },
+ {
+  "id": "jC08eYnrSfY",
+  "title": "The King's Indian Attack · Chess Openings",
+  "channel": "Hanging Pawns",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "kings-indian-attack"
+ },
+ {
+  "id": "knRe3EsANdg",
+  "title": "Master Class | King's Indian Attack | Chess Speedrun | Grandmaster Naroditsky",
+  "channel": "Daniel Naroditsky",
+  "category": "chess",
+  "level": "Beginner",
+  "topic": "openings",
+  "kit": "kings-indian-attack"
  }
 ]

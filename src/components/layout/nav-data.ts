@@ -7,7 +7,8 @@ export interface NavGroup { label: string; href: string; icon: LucideIcon; items
 export const NAV: NavGroup[] = [
   { label: "Learn", href: "/learn", icon: BookOpen, items: [
     { href: "/chess", label: "Chess lessons", desc: "Step-by-step course, from the rules up" },
-    { href: "/openings", label: "Opening kits", desc: "Italian, London, Sicilian, King's Indian and more" },
+    { href: "/openings", label: "Opening kits", desc: "46 kits with lessons, lines, games and PDF guides" },
+    { href: "/openings/explorer", label: "Openings explorer", desc: "Search 3,865 named openings by name, moves or position" },
     { href: "/cube", label: "Cube lessons", desc: "Beginner method, CFOP, Roux, ZZ" },
     { href: "/cube/algorithms", label: "Algorithms", desc: "All OLL, PLL and F2L cases" },
     { href: "/videos", label: "Videos", desc: "Hand-picked lessons from top YouTube teachers" },

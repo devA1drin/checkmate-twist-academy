@@ -2,6 +2,8 @@
 // checked by scripts/verify-openings.ts with chess.js. ECO codes are checked against
 // the lichess-org/chess-openings data set (scripts/data/lichess-openings.tsv).
 export type Level = "Beginner" | "Intermediate" | "Advanced";
+import { E4_KITS } from "./kits-e4";
+import { D4_KITS } from "./kits-d4";
 export interface KitLine { id: string; name: string; eco: string; kind: "main" | "side"; moves: string; note: string }
 export interface KitTrap { name: string; moves: string; text: string; kind: "trap" | "mistake" }
 export interface KitStructure { name: string; moves: string; text: string }
@@ -9,7 +11,7 @@ export interface OpeningKit {
   slug: string;
   name: string;
   short: string;
-  family: "1.e4" | "1.d4" | "1.c4";
+  family: "1.e4" | "1.d4" | "1.c4" | "1.Nf3" | "1.f4";
   side: "white" | "black";
   level: Level;
   ecoRange: string;
@@ -22,7 +24,7 @@ export interface OpeningKit {
   traps: KitTrap[];
 }
 
-export const KITS: OpeningKit[] = [
+const CORE_KITS: OpeningKit[] = [
   {
     slug: "italian", name: "Italian Game", short: "Italian", family: "1.e4", side: "white", level: "Beginner", ecoRange: "C50–C54",
     summary: "White develops the bishop to c4, where it looks at Black's weakest square, f7. Then White builds a centre with c3 and d4 (or the calm d3). It teaches the basic rules of the opening: develop, castle, fight for the centre.",
@@ -405,5 +407,7 @@ export const KITS: OpeningKit[] = [
     ],
   },
 ];
+
+export const KITS: OpeningKit[] = [...CORE_KITS, ...E4_KITS, ...D4_KITS];
 
 export const KIT_BY_SLUG = Object.fromEntries(KITS.map((k) => [k.slug, k]));
